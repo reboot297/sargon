@@ -27,6 +27,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>xls</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
