@@ -24,13 +24,48 @@
     <artifactId>sargon</artifactId>
     <packaging>pom</packaging>
     <version>0.1.0-SNAPSHOT</version>
+    <name>Sargon</name>
+
+    <inceptionYear>2022</inceptionYear>
+    <url>https://github.com/reboot297/sargon</url>
+
+    <developers>
+        <developer>
+            <name>Viktor Pop</name>
+            <email>reboot297@gmail.com</email>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache 2.0 License</name>
+            <distribution>manual</distribution>
+            <comments>This content is released under the Apache 2.0 License. See the license file for more
+                information.
+            </comments>
+        </license>
+    </licenses>
+
     <modules>
+        <module>bom</module>
         <module>core</module>
         <module>app</module>
         <module>converters/base</module>
         <module>converters/android</module>
         <module>converters/xls</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.reboot297.sargon</groupId>
+                <artifactId>bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
