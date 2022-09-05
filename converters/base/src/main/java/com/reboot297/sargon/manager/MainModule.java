@@ -16,25 +16,14 @@
 
 package com.reboot297.sargon.manager;
 
-import java.util.List;
+import dagger.Binds;
+import dagger.Module;
 
-/**
- * Manager to work with converters.
- */
-public interface AppManager {
-    /**
-     * Convert string resources.
-     *
-     * @param from converter identifier.
-     * @param to   converter identifier.
-     * @return true if success.
-     */
-    boolean convert(String from, String to);
+import javax.inject.Singleton;
 
-    /**
-     * GetList of available commands.
-     *
-     * @return list of strings.
-     */
-    List<String> getAvailableCommands();
+@Module
+public interface MainModule {
+    @Singleton
+    @Binds
+    AppManager bindAppManager(AppManagerImpl appManager);
 }

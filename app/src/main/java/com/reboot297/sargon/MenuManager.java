@@ -14,27 +14,23 @@
  *
  */
 
-package com.reboot297.sargon.manager;
+package com.reboot297.sargon;
 
-import java.util.List;
+import com.reboot297.sargon.manager.AppManager;
 
-/**
- * Manager to work with converters.
- */
-public interface AppManager {
-    /**
-     * Convert string resources.
-     *
-     * @param from converter identifier.
-     * @param to   converter identifier.
-     * @return true if success.
-     */
-    boolean convert(String from, String to);
+import javax.inject.Inject;
 
-    /**
-     * GetList of available commands.
-     *
-     * @return list of strings.
-     */
-    List<String> getAvailableCommands();
+public class MenuManager {
+    @Inject
+    AppManager appManager;
+
+    public MenuManager() {
+        App.appComponent.inject(this);
+    }
+
+    public void start() {
+        System.out.println("Available convertors: ");
+        System.out.println(appManager.getAvailableCommands());
+    }
+
 }

@@ -20,7 +20,9 @@ import com.reboot297.sargon.converter.AndroidConverter;
 import com.reboot297.sargon.converter.BaseConverter;
 import com.reboot297.sargon.converter.XlsConverter;
 
+import javax.inject.Inject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +31,7 @@ import java.util.Map;
 class AppManagerImpl implements AppManager {
     private final Map<String, BaseConverter> converters = new HashMap<>();
 
+    @Inject
     AppManagerImpl() {
         converters.put("xls", new XlsConverter());
         converters.put("android", new AndroidConverter());
@@ -39,5 +42,10 @@ class AppManagerImpl implements AppManager {
     public boolean convert(String from, String to) {
         //TODO not implemented
         return false;
+    }
+
+    @Override
+    public List<String> getAvailableCommands() {
+        return List.of("android", "xml");
     }
 }

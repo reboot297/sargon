@@ -14,11 +14,12 @@
  *
  */
 
-import com.reboot297.sargon.manager.AppManager;
+package com.reboot297.sargon;
 
 public class App {
+    static AppComponent appComponent = DaggerAppComponent.builder().build();
+
     public static void main(String[] args) {
-        System.out.println("Hello Sargon!");
-        AppManager appManager;
+        new MenuManager().start();
     }
 }
