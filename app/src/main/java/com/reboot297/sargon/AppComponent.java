@@ -24,5 +24,9 @@ import javax.inject.Singleton;
 @Singleton
 @Component(modules = {MainModule.class})
 public interface AppComponent {
+    /**
+     * Inject menuManager.
+     * @param menuManager instance of the class.
+     */
     void inject(MenuManager menuManager);
 }

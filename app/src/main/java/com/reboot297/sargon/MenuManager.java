@@ -21,13 +21,22 @@ import com.reboot297.sargon.manager.AppManager;
 import javax.inject.Inject;
 
 public class MenuManager {
+    /**
+     * App Manager instance.
+     */
     @Inject
     AppManager appManager;
 
+    /**
+     * Constructor for MenuManager.
+     */
     public MenuManager() {
         App.appComponent.inject(this);
     }
 
+    /**
+     * Open menu.
+     */
     public void start() {
         System.out.println("Available convertors: ");
         System.out.println(appManager.getAvailableCommands());

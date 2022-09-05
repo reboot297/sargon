@@ -23,6 +23,7 @@ abstract class BaseItem {
 
     /**
      * Get type of the item.
+     * @return item type
      */
     abstract ItemType getType();
 }

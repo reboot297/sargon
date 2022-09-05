@@ -26,9 +26,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Implementation of the {@link AppManager}
+ * Implementation of the {@link AppManager}.
  */
 class AppManagerImpl implements AppManager {
+    /**
+     * Map of converters.
+     */
     private final Map<String, BaseConverter> converters = new HashMap<>();
 
     @Inject

@@ -14,24 +14,7 @@
  *
  */
 
-package com.reboot297.sargon.manager;
-
-import dagger.Binds;
-import dagger.Module;
-
-import javax.inject.Singleton;
-
 /**
- * Main module for the application.
+ * Main application package.
  */
-@Module
-public interface MainModule {
-    /**
-     * Provide ApplicationManager.
-     * @param appManager app manager implementation
-     * @return ApplicationManage instance.
-     */
-    @Singleton
-    @Binds
-    AppManager bindAppManager(AppManagerImpl appManager);
-}
+package com.reboot297.sargon;
