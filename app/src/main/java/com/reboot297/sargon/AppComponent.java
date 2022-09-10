@@ -16,7 +16,7 @@
 
 package com.reboot297.sargon;
 
-import com.reboot297.sargon.manager.MainModule;
+import com.reboot297.sargon.converter.MainModule;
 import dagger.Component;
 
 import javax.inject.Singleton;

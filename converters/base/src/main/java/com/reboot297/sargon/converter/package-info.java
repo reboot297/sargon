@@ -14,23 +14,7 @@
  *
  */
 
-package com.reboot297.sargon.converter;
-
-import javax.annotation.Nonnull;
-
 /**
- * Base converter.
- *
- * @param <T> type of data.
+ * Package wit converters.
  */
-interface BaseConverter<T> {
-    /**
-     * Current formatter.<br/>
-     * To create data from a list of items
-     *
-     * @return formatter.
-     */
-    @Nonnull
-    BaseFormatter<T> getFormatter();
-
-}
+package com.reboot297.sargon.converter;
