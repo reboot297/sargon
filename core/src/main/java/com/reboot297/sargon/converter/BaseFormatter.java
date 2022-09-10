@@ -14,24 +14,12 @@
  *
  */
 
-package com.reboot297.sargon.manager;
-
-import dagger.Binds;
-import dagger.Module;
-
-import javax.inject.Singleton;
+package com.reboot297.sargon.converter;
 
 /**
- * Main module for the application.
+ * Base Formatter for all typer of data.
+ *
+ * @param <T> type of the data.
  */
-@Module
-public interface MainModule {
-    /**
-     * Provide ApplicationManager.
-     * @param appManager app manager implementation
-     * @return ApplicationManage instance.
-     */
-    @Singleton
-    @Binds
-    AppManager bindAppManager(AppManagerImpl appManager);
+interface BaseFormatter<T> {
 }

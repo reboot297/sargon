@@ -19,11 +19,11 @@ package com.reboot297.sargon.model;
 /**
  * Base model for all items.
  */
-abstract class BaseItem {
+public abstract class BaseItem {
 
     /**
      * Get type of the item.
      * @return item type
      */
-    abstract ItemType getType();
+    public abstract ItemType getType();
 }

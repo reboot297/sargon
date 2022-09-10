@@ -19,18 +19,22 @@ package com.reboot297.sargon.converter;
 import javax.annotation.Nonnull;
 
 /**
- * Base converter.
+ * Base implementation for all convertors.
  *
  * @param <T> type of data.
  */
-interface BaseConverter<T> {
+abstract class BaseConverterImpl<T> implements BaseConverter<T> {
     /**
-     * Current formatter.<br/>
-     * To create data from a list of items
-     *
-     * @return formatter.
+     * Formatter instance.
      */
-    @Nonnull
-    BaseFormatter<T> getFormatter();
+    protected final BaseFormatter<T> formatter;
 
+    /**
+     * Constructor.
+     *
+     * @param formatter default formatter
+     */
+    BaseConverterImpl(@Nonnull BaseFormatter<T> formatter) {
+        this.formatter = formatter;
+    }
 }

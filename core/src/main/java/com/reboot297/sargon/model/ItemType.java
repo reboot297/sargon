@@ -23,5 +23,10 @@ public enum ItemType {
     /**
      * Empty line.
      */
-    EMPTY
+    EMPTY,
+
+    /**
+     * Simple String.
+     */
+    STRING,
 }

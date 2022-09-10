@@ -14,11 +14,9 @@
  *
  */
 
-package com.reboot297.sargon.manager;
+package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.converter.AndroidConverter;
-import com.reboot297.sargon.converter.BaseConverter;
-import com.reboot297.sargon.converter.XlsConverter;
+import com.reboot297.sargon.manager.AppManager;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -32,12 +30,13 @@ class AppManagerImpl implements AppManager {
     /**
      * Map of converters.
      */
+    @SuppressWarnings("unused")
     private final Map<String, BaseConverter> converters = new HashMap<>();
 
     @Inject
     AppManagerImpl() {
-        converters.put("xls", new XlsConverter());
-        converters.put("android", new AndroidConverter());
+        //converters.put("xls", new XlsConverter());
+        //converters.put("android", new AndroidConverter());
     }
 
 

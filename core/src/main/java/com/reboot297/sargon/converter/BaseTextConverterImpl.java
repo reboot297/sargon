@@ -14,16 +14,23 @@
  *
  */
 
-package com.reboot297.sargon.manager;import com.reboot297.sargon.manager.AppManager;
-import org.junit.jupiter.api.Test;
+package com.reboot297.sargon.converter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import javax.annotation.Nonnull;
 
-public class AppManagerTest {
+/**
+ * Base converter for all text data.
+ * @param <T> type of the data.
+ */
+abstract class BaseTextConverterImpl<T> extends BaseConverterImpl<T> {
 
-    @Test
-    public void testFormatXls() {
-        AppManager appManager = new AppManagerImpl();
-        assertEquals("test", "test");
+    BaseTextConverterImpl(BaseFormatter<T> formatter) {
+        super(formatter);
+    }
+
+    @Nonnull
+    @Override
+    public BaseTextFormatter<T> getFormatter() {
+        return (BaseTextFormatter<T>) formatter;
     }
 }

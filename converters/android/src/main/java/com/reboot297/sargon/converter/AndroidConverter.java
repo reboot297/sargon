@@ -16,8 +16,14 @@
 
 package com.reboot297.sargon.converter;
 
+import javax.inject.Inject;
+
 /**
  * Converter for Android resources.
  */
-public class AndroidConverter implements BaseConverter {
+final class AndroidConverter extends BaseTextConverterImpl<String> {
+    @Inject
+    AndroidConverter(AndroidFormatter formatter) {
+        super(formatter);
+    }
 }

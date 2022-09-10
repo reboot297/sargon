@@ -19,5 +19,5 @@ package com.reboot297.sargon.converter;
 /**
  * Converter for xls.
  */
-public class XlsConverter implements BaseConverter {
+public class XlsConverter {
 }

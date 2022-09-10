@@ -14,7 +14,18 @@
  *
  */
 
-/**
- * Package with Application Manager.
- */
-package com.reboot297.sargon.manager;
+package com.reboot297.sargon.converter;
+
+import com.reboot297.sargon.manager.AppManager;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class AppManagerTest {
+
+    @Test
+    public void testFormatXls() {
+        AppManager appManager = new AppManagerImpl();
+        assertEquals("test", "test");
+    }
+}

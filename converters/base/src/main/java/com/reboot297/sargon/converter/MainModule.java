@@ -16,21 +16,23 @@
 
 package com.reboot297.sargon.converter;
 
-import javax.annotation.Nonnull;
+import com.reboot297.sargon.manager.AppManager;
+import dagger.Binds;
+import dagger.Module;
+
+import javax.inject.Singleton;
 
 /**
- * Base converter.
- *
- * @param <T> type of data.
+ * Main module for the application.
  */
-interface BaseConverter<T> {
+@Module
+public interface MainModule {
     /**
-     * Current formatter.<br/>
-     * To create data from a list of items
-     *
-     * @return formatter.
+     * Provide ApplicationManager.
+     * @param appManager app manager implementation
+     * @return ApplicationManage instance.
      */
-    @Nonnull
-    BaseFormatter<T> getFormatter();
-
+    @Singleton
+    @Binds
+    AppManager bindAppManager(AppManagerImpl appManager);
 }
