@@ -18,15 +18,26 @@ package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.manager.AppManager;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Implementation of the {@link AppManager}.
  */
-class AppManagerImpl implements AppManager {
+final class AppManagerImpl implements AppManager {
+
+    private static final String DEFAULT_PROPERTIES_PATH = "./sargon.properties";
+    private static final String PROPERTIES_SUFFIX_INPUT = "-input";
+    private static final String PROPERTIES_SUFFIX_OUTPUT = "-output";
+
+    /**
+     * Application settings.
+     */
+    private Properties appProps = new Properties();
+
     /**
      * Map of converters.
      */
@@ -35,19 +46,45 @@ class AppManagerImpl implements AppManager {
 
     @Inject
     AppManagerImpl() {
-        //converters.put("xls", new XlsConverter());
-        //converters.put("android", new AndroidConverter());
+        converters.put("xls", new XlsConverter(null, new XLSParser(), new XLSFileReader(), null));
+        converters.put("android", new AndroidConverter(new AndroidFormatter(), null,
+                null, new AndroidFileWriter()));
     }
-
 
     @Override
     public boolean convert(String from, String to) {
-        //TODO not implemented
-        return false;
+        loadProperties();
+        var inputFilePath = appProps.getProperty(from + PROPERTIES_SUFFIX_INPUT);
+        var outputFilePath = appProps.getProperty(to + PROPERTIES_SUFFIX_OUTPUT);
+        return convert(from, to, inputFilePath, outputFilePath);
     }
 
     @Override
-    public List<String> getAvailableCommands() {
-        return List.of("android", "xml");
+    public boolean convert(@Nonnull String from, @Nonnull String to, @Nonnull String sourcePath, @Nonnull String destinationPath) {
+
+        var converterFrom = converters.get(from);
+        var converterTo = converters.get(to);
+        if (converterFrom != null && converterTo != null) {
+            var source = converterFrom.getFileReader().readFile(sourcePath);
+            var items = converterFrom.getParser().parse(source);
+            var result = converterTo.getFormatter().format(items);
+            converterTo.getFileWriter().writeFile(result, destinationPath);
+            return true;
+        }
+        return false;
+    }
+
+    private void loadProperties() {
+        appProps = new Properties();
+        try {
+            appProps.load(new FileInputStream(DEFAULT_PROPERTIES_PATH));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Set<String> getAvailableCommands() {
+        return converters.keySet();
     }
 }

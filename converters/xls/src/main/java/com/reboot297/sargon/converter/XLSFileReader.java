@@ -16,24 +16,21 @@
 
 package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.model.BaseItem;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import java.io.FileInputStream;
+import java.io.IOException;
 
-/**
- * Base formatter for text files.
- *
- * @param <T> type data
- */
-interface BaseTextFormatter<T> extends BaseFormatter<T> {
-    /**
-     * Convert items to different files format.
-     *
-     * @param items list of items
-     * @return data
-     */
-    @Nonnull
-    T format(List<BaseItem> items);
-
+public final class XLSFileReader implements BaseFileReader<Workbook> {
+    @Override
+    public Workbook readFile(@Nonnull String fileLocation) {
+        try {
+            return new XSSFWorkbook(new FileInputStream(fileLocation));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

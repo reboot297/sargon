@@ -14,34 +14,24 @@
  *
  */
 
-package com.reboot297.sargon;
+package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.manager.AppManager;
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import javax.inject.Inject;
-
-public class MenuManager {
-    /**
-     * App Manager instance.
-     */
-    @Inject
-    AppManager appManager;
-
-    /**
-     * Constructor for MenuManager.
-     */
-    public MenuManager() {
-        App.appComponent.inject(this);
+public final class AndroidFileWriter implements BaseFileWriter<String> {
+    @Override
+    public boolean writeFile(@Nonnull String source, @Nonnull String path) {
+        try {
+            Path p = Path.of(path);
+            Files.createDirectories(p.getParent());
+            Files.writeString(p, source);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
-
-    /**
-     * Open menu.
-     */
-    public void start() {
-        System.out.println("Available convertors: ");
-        System.out.println(appManager.getAvailableCommands());
-        System.out.println("Convert");
-        appManager.convert("xls", "android");
-    }
-
 }

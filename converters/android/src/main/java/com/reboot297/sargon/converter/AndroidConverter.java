@@ -16,6 +16,7 @@
 
 package com.reboot297.sargon.converter;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 /**
@@ -23,7 +24,11 @@ import javax.inject.Inject;
  */
 final class AndroidConverter extends BaseConverterImpl<String> {
     @Inject
-    AndroidConverter(AndroidFormatter formatter, BaseParser<String> parser) {
-        super(formatter, parser);
+    AndroidConverter(
+            @Nonnull AndroidFormatter formatter,
+            @Nonnull BaseParser<String> parser,
+            @Nonnull BaseFileReader<String> reader,
+            @Nonnull AndroidFileWriter writer) {
+        super(formatter, parser, reader, writer);
     }
 }

@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Implementation of formatter for android.
  */
-final class AndroidFormatter implements BaseTextFormatter<String> {
+final class AndroidFormatter implements BaseFormatter<String> {
     @Override
     @Nonnull
     public String format(@Nonnull List<BaseItem> items) {

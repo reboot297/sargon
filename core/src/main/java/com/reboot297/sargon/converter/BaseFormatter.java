@@ -16,10 +16,23 @@
 
 package com.reboot297.sargon.converter;
 
+import com.reboot297.sargon.model.BaseItem;
+
+import javax.annotation.Nonnull;
+import java.util.List;
+
 /**
  * Base Formatter for all typer of data.
  *
  * @param <T> type of the data.
  */
 interface BaseFormatter<T> {
+    /**
+     * Convert items to different files format.
+     *
+     * @param items list of items
+     * @return data
+     */
+    @Nonnull
+    T format(List<BaseItem> items);
 }

@@ -32,7 +32,10 @@ public class XlsConverter extends BaseConverterImpl<Workbook>{
      * @param parser default parser
      */
     @Inject
-    XlsConverter(@Nonnull BaseFormatter<Workbook> formatter, @Nonnull XLSParser parser) {
-        super(formatter, parser);
+    XlsConverter(@Nonnull BaseFormatter<Workbook> formatter,
+                 @Nonnull XLSParser parser,
+                 @Nonnull XLSFileReader reader,
+                 @Nonnull BaseFileWriter<Workbook> writer) {
+        super(formatter, parser, reader, writer);
     }
 }

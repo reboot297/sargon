@@ -16,7 +16,8 @@
 
 package com.reboot297.sargon.manager;
 
-import java.util.List;
+import javax.annotation.Nonnull;
+import java.util.Set;
 
 /**
  * Manager to work with converters.
@@ -32,9 +33,21 @@ public interface AppManager {
     boolean convert(String from, String to);
 
     /**
-     * GetList of available commands.
+     * Convert string resources.
+     *
+     * @param from converter identifier.
+     * @param to   converter identifier.
+     * @param sourcePath path to source file.
+     * @param destinationPath path to destination file.
+     * @return true if success.
+     */
+    boolean convert(@Nonnull String from, @Nonnull String to,
+                    @Nonnull String sourcePath, @Nonnull String destinationPath);
+
+    /**
+     * Get Set of available commands.
      *
      * @return list of strings.
      */
-    List<String> getAvailableCommands();
+    Set<String> getAvailableCommands();
 }

@@ -14,34 +14,18 @@
  *
  */
 
-package com.reboot297.sargon;
+package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.manager.AppManager;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import javax.inject.Inject;
-
-public class MenuManager {
+interface BaseFileReader<T> {
     /**
-     * App Manager instance.
+     * Read data from file.
+     *
+     * @param path path to file
+     * @return data
      */
-    @Inject
-    AppManager appManager;
-
-    /**
-     * Constructor for MenuManager.
-     */
-    public MenuManager() {
-        App.appComponent.inject(this);
-    }
-
-    /**
-     * Open menu.
-     */
-    public void start() {
-        System.out.println("Available convertors: ");
-        System.out.println(appManager.getAvailableCommands());
-        System.out.println("Convert");
-        appManager.convert("xls", "android");
-    }
-
+    @Nullable
+    T readFile(@Nonnull String path);
 }

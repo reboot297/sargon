@@ -35,15 +35,29 @@ abstract class BaseConverterImpl<T> implements BaseConverter<T> {
     private final BaseParser<T> parser;
 
     /**
+     * File reader instance.
+     */
+    private final BaseFileReader<T> fileReader;
+
+    /**
+     * File writer instance.
+     */
+    private final BaseFileWriter<T> fileWriter;
+
+    /**
      * Constructor.
      *
      * @param formatter default formatter
      * @param parser default parser
      */
     BaseConverterImpl(@Nonnull BaseFormatter<T> formatter,
-                      @Nonnull BaseParser<T> parser) {
+                      @Nonnull BaseParser<T> parser,
+                      @Nonnull BaseFileReader<T> reader,
+                      @Nonnull BaseFileWriter<T> writer) {
         this.formatter = formatter;
         this.parser = parser;
+        this.fileReader = reader;
+        this.fileWriter = writer;
     }
 
     @Nonnull
@@ -56,5 +70,17 @@ abstract class BaseConverterImpl<T> implements BaseConverter<T> {
     @Override
     public BaseParser<T> getParser() {
         return parser;
+    }
+
+    @Nonnull
+    @Override
+    public BaseFileReader<T> getFileReader() {
+        return fileReader;
+    }
+
+    @Nonnull
+    @Override
+    public BaseFileWriter<T> getFileWriter() {
+        return fileWriter;
     }
 }
