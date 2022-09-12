@@ -16,21 +16,23 @@
 
 package com.reboot297.sargon.converter;
 
+import com.reboot297.sargon.model.BaseItem;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
- * Base converter for all text data.
+ * Base Parser for all types of data.
  * @param <T> type of the data.
  */
-abstract class BaseTextConverterImpl<T> extends BaseConverterImpl<T> {
-
-    BaseTextConverterImpl(BaseFormatter<T> formatter) {
-        super(formatter);
-    }
-
-    @Nonnull
-    @Override
-    public BaseTextFormatter<T> getFormatter() {
-        return (BaseTextFormatter<T>) formatter;
-    }
+interface BaseParser<T> {
+    /**
+     * Parsing data into list of items.
+     *
+     * @param source like xml, json, xls
+     * @return list of items
+     */
+    @Nullable
+    List<BaseItem> parse(@Nonnull T source);
 }

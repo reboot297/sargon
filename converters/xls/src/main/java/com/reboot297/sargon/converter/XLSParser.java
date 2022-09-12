@@ -16,23 +16,31 @@
 
 package com.reboot297.sargon.converter;
 
+import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.StringItem;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Converter for xls.
+ * XLS Parser.
  */
-public class XlsConverter extends BaseConverterImpl<Workbook>{
-    /**
-     * Constructor.
-     *
-     * @param formatter default formatter
-     * @param parser default parser
-     */
-    @Inject
-    XlsConverter(@Nonnull BaseFormatter<Workbook> formatter, @Nonnull XLSParser parser) {
-        super(formatter, parser);
+public class XLSParser implements BaseParser<Workbook> {
+    @Nullable
+    @Override
+    public List<BaseItem> parse(@Nonnull Workbook source) {
+        var items = new ArrayList<BaseItem>();
+        var sheet = source.getSheetAt(0);
+
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            var row = sheet.getRow(i);
+            if (row != null) {
+                items.add(new StringItem(row.getCell(0).getStringCellValue(), row.getCell(1).getStringCellValue()));
+            }
+        }
+        return items;
     }
 }

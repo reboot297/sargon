@@ -21,9 +21,9 @@ import javax.inject.Inject;
 /**
  * Converter for Android resources.
  */
-final class AndroidConverter extends BaseTextConverterImpl<String> {
+final class AndroidConverter extends BaseConverterImpl<String> {
     @Inject
-    AndroidConverter(AndroidFormatter formatter) {
-        super(formatter);
+    AndroidConverter(AndroidFormatter formatter, BaseParser<String> parser) {
+        super(formatter, parser);
     }
 }
