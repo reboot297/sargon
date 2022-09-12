@@ -16,8 +16,23 @@
 
 package com.reboot297.sargon.converter;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
 /**
  * Converter for xls.
  */
-public class XlsConverter {
+public class XlsConverter extends BaseConverterImpl<Workbook>{
+    /**
+     * Constructor.
+     *
+     * @param formatter default formatter
+     * @param parser default parser
+     */
+    @Inject
+    XlsConverter(@Nonnull BaseFormatter<Workbook> formatter, @Nonnull XLSParser parser) {
+        super(formatter, parser);
+    }
 }

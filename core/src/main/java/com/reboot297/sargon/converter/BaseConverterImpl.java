@@ -27,14 +27,34 @@ abstract class BaseConverterImpl<T> implements BaseConverter<T> {
     /**
      * Formatter instance.
      */
-    protected final BaseFormatter<T> formatter;
+    private final BaseFormatter<T> formatter;
+
+    /**
+     * Parser instance.
+     */
+    private final BaseParser<T> parser;
 
     /**
      * Constructor.
      *
      * @param formatter default formatter
+     * @param parser default parser
      */
-    BaseConverterImpl(@Nonnull BaseFormatter<T> formatter) {
+    BaseConverterImpl(@Nonnull BaseFormatter<T> formatter,
+                      @Nonnull BaseParser<T> parser) {
         this.formatter = formatter;
+        this.parser = parser;
+    }
+
+    @Nonnull
+    @Override
+    public BaseFormatter<T> getFormatter() {
+        return formatter;
+    }
+
+    @Nonnull
+    @Override
+    public BaseParser<T> getParser() {
+        return parser;
     }
 }

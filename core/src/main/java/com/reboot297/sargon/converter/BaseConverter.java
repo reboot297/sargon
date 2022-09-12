@@ -33,4 +33,13 @@ interface BaseConverter<T> {
     @Nonnull
     BaseFormatter<T> getFormatter();
 
+    /**
+     * Current parser.<br/>
+     * Parse data into list of the items.
+     *
+     * @return parser.
+     */
+    @Nonnull
+    BaseParser<T> getParser();
+
 }
