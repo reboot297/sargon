@@ -23,7 +23,14 @@ import javax.annotation.Nonnull;
  *
  * @param <T> type of data.
  */
-interface BaseConverter<T> {
+public interface BaseConverter<T> {
+    /**
+     * Unique command from this converter.
+     * @return command
+     */
+    @Nonnull
+    String getCommand();
+
     /**
      * Current formatter.<br/>
      * To create data from a list of items

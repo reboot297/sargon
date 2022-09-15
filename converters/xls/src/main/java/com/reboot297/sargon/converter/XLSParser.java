@@ -22,13 +22,19 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * XLS Parser.
  */
-public class XLSParser implements BaseParser<Workbook> {
+final class XLSParser implements BaseParser<Workbook> {
+    @Inject
+    XLSParser() {
+
+    }
+
     @Nullable
     @Override
     public List<BaseItem> parse(@Nonnull Workbook source) {

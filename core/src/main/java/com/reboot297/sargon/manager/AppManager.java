@@ -16,6 +16,8 @@
 
 package com.reboot297.sargon.manager;
 
+import com.reboot297.sargon.converter.BaseConverter;
+
 import javax.annotation.Nonnull;
 import java.util.Set;
 
@@ -35,9 +37,9 @@ public interface AppManager {
     /**
      * Convert string resources.
      *
-     * @param from converter identifier.
-     * @param to   converter identifier.
-     * @param sourcePath path to source file.
+     * @param from            converter identifier.
+     * @param to              converter identifier.
+     * @param sourcePath      path to source file.
      * @param destinationPath path to destination file.
      * @return true if success.
      */
@@ -50,4 +52,11 @@ public interface AppManager {
      * @return list of strings.
      */
     Set<String> getAvailableCommands();
+
+    /**
+     * Add Converter.
+     *
+     * @param converter converter
+     */
+    void addConverter(@Nonnull BaseConverter converter);
 }

@@ -16,25 +16,26 @@
 
 package com.reboot297.sargon.converter;
 
+import com.reboot297.sargon.model.BaseItem;
+import org.apache.poi.ss.usermodel.Workbook;
+
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.List;
 
 /**
- * Converter for Android resources.
+ * Formatter for XLS files.
  */
-final class AndroidConverter extends BaseConverterImpl<String> {
+final class XLSFormatter implements BaseFormatter<Workbook> {
+
     @Inject
-    AndroidConverter(
-            @Nonnull AndroidFormatter formatter,
-            @Nonnull AndroidParser parser,
-            @Nonnull AndroidFileReader reader,
-            @Nonnull AndroidFileWriter writer) {
-        super(formatter, parser, reader, writer);
+    XLSFormatter() {
+
     }
 
     @Nonnull
     @Override
-    public String getCommand() {
-        return "android";
+    public Workbook format(List<BaseItem> items) {
+        return null;
     }
 }

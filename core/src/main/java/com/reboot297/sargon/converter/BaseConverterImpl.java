@@ -49,6 +49,8 @@ abstract class BaseConverterImpl<T> implements BaseConverter<T> {
      *
      * @param formatter default formatter
      * @param parser default parser
+     * @param reader file reader
+     * @param writer file writer
      */
     BaseConverterImpl(@Nonnull BaseFormatter<T> formatter,
                       @Nonnull BaseParser<T> parser,

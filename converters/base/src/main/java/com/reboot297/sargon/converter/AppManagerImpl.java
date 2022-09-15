@@ -22,15 +22,27 @@ import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Implementation of the {@link AppManager}.
  */
 final class AppManagerImpl implements AppManager {
 
+    /**
+     * default path to property file.
+     */
     private static final String DEFAULT_PROPERTIES_PATH = "./sargon.properties";
+    /**
+     * Suffix for input path property.
+     */
     private static final String PROPERTIES_SUFFIX_INPUT = "-input";
+    /**
+     * Suffix for output path property.
+     */
     private static final String PROPERTIES_SUFFIX_OUTPUT = "-output";
 
     /**
@@ -44,11 +56,14 @@ final class AppManagerImpl implements AppManager {
     @SuppressWarnings("unused")
     private final Map<String, BaseConverter> converters = new HashMap<>();
 
+    public void addConverter(@Nonnull BaseConverter converter) {
+        converters.put(converter.getCommand(), converter);
+    }
+
     @Inject
-    AppManagerImpl() {
-        converters.put("xls", new XlsConverter(null, new XLSParser(), new XLSFileReader(), null));
-        converters.put("android", new AndroidConverter(new AndroidFormatter(), null,
-                null, new AndroidFileWriter()));
+    AppManagerImpl(XlsConverter xlsConverter, AndroidConverter androidConverter) {
+        addConverter(androidConverter);
+        addConverter(xlsConverter);
     }
 
     @Override
@@ -60,7 +75,10 @@ final class AppManagerImpl implements AppManager {
     }
 
     @Override
-    public boolean convert(@Nonnull String from, @Nonnull String to, @Nonnull String sourcePath, @Nonnull String destinationPath) {
+    public boolean convert(@Nonnull String from,
+                           @Nonnull String to,
+                           @Nonnull String sourcePath,
+                           @Nonnull String destinationPath) {
 
         var converterFrom = converters.get(from);
         var converterTo = converters.get(to);

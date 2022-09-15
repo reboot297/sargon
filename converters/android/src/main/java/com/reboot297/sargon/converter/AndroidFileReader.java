@@ -17,24 +17,36 @@
 package com.reboot297.sargon.converter;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
- * Converter for Android resources.
+ * Reader for Android xml files.
  */
-final class AndroidConverter extends BaseConverterImpl<String> {
+final class AndroidFileReader implements BaseFileReader<String> {
+
     @Inject
-    AndroidConverter(
-            @Nonnull AndroidFormatter formatter,
-            @Nonnull AndroidParser parser,
-            @Nonnull AndroidFileReader reader,
-            @Nonnull AndroidFileWriter writer) {
-        super(formatter, parser, reader, writer);
+    AndroidFileReader() {
+
     }
 
-    @Nonnull
+    /**
+     * Open android xml file and read it as a string.
+     *
+     * @param path path to file
+     * @return string or null
+     */
+    @Nullable
     @Override
-    public String getCommand() {
-        return "android";
+    public String readFile(@Nonnull String path) {
+        try {
+            return Files.readString(Path.of(path));
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+        return null;
     }
 }

@@ -20,10 +20,26 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public final class XLSFileReader implements BaseFileReader<Workbook> {
+/**
+ * Reader for the XLS files.
+ */
+final class XLSFileReader implements BaseFileReader<Workbook> {
+
+    @Inject
+    XLSFileReader() {
+
+    }
+
+    /**
+     * Open file and read it into workbook object.
+     *
+     * @param fileLocation path to file
+     * @returnn workbook or null
+     */
     @Override
     public Workbook readFile(@Nonnull String fileLocation) {
         try {

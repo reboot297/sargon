@@ -16,39 +16,43 @@
 
 package com.reboot297.sargon.converter;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * This class help us to write android formatted string to the files.
+ * Writer for XLS files.
  */
-final class AndroidFileWriter implements BaseFileWriter<String> {
-
+final class XLSFileWriter implements BaseFileWriter<Workbook> {
     @Inject
-    AndroidFileWriter() {
+    XLSFileWriter() {
 
     }
 
     /**
-     * Write android xml date into the file.
+     * Write workbook into the file.
      *
-     * @param source formatted data
+     * @param source workbook
      * @param path   path to file
-     * @return true if success.
+     * @return true if success
      */
     @Override
-    public boolean writeFile(@Nonnull String source, @Nonnull String path) {
+    public boolean writeFile(@Nonnull Workbook source, @Nonnull String path) {
         try {
             Path p = Path.of(path);
             Files.createDirectories(p.getParent());
-            Files.writeString(p, source);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+            OutputStream outputStream = Files.newOutputStream(p);
+            source.write(outputStream);
+            source.close();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            return false;
         }
-        return false;
+        return true;
     }
 }
