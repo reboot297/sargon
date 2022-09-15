@@ -18,23 +18,37 @@ package com.reboot297.sargon.converter;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
- * Converter for Android resources.
+ * This class help us to write android formatted string to the files.
  */
-final class AndroidConverter extends BaseConverterImpl<String> {
+final class AndroidFileWriter implements BaseFileWriter<String> {
+
     @Inject
-    AndroidConverter(
-            @Nonnull AndroidFormatter formatter,
-            @Nonnull AndroidParser parser,
-            @Nonnull AndroidFileReader reader,
-            @Nonnull AndroidFileWriter writer) {
-        super(formatter, parser, reader, writer);
+    AndroidFileWriter() {
+
     }
 
-    @Nonnull
+    /**
+     * Write android xml date into the file.
+     *
+     * @param source formatted data
+     * @param path   path to file
+     * @return true if success.
+     */
     @Override
-    public String getCommand() {
-        return "android";
+    public boolean writeFile(@Nonnull String source, @Nonnull String path) {
+        try {
+            Path p = Path.of(path);
+            Files.createDirectories(p.getParent());
+            Files.writeString(p, source);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

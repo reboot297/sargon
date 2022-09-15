@@ -23,7 +23,14 @@ import javax.annotation.Nonnull;
  *
  * @param <T> type of data.
  */
-interface BaseConverter<T> {
+public interface BaseConverter<T> {
+    /**
+     * Unique command from this converter.
+     * @return command
+     */
+    @Nonnull
+    String getCommand();
+
     /**
      * Current formatter.<br/>
      * To create data from a list of items
@@ -41,5 +48,22 @@ interface BaseConverter<T> {
      */
     @Nonnull
     BaseParser<T> getParser();
+
+    /**
+     * Base class to read data from files.
+     *
+     * @return reader instance or null
+     */
+
+    @Nonnull
+    BaseFileReader<T> getFileReader();
+
+    /**
+     * Base class to write data to files.
+     *
+     * @return writer instance
+     */
+    @Nonnull
+    BaseFileWriter<T> getFileWriter();
 
 }

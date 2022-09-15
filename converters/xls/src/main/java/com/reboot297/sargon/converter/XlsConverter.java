@@ -24,15 +24,26 @@ import javax.inject.Inject;
 /**
  * Converter for xls.
  */
-public class XlsConverter extends BaseConverterImpl<Workbook>{
+final class XlsConverter extends BaseConverterImpl<Workbook> {
     /**
      * Constructor.
      *
      * @param formatter default formatter
-     * @param parser default parser
+     * @param parser    default parser
+     * @param reader    file reader
+     * @param writer    file writer
      */
     @Inject
-    XlsConverter(@Nonnull BaseFormatter<Workbook> formatter, @Nonnull XLSParser parser) {
-        super(formatter, parser);
+    XlsConverter(@Nonnull XLSFormatter formatter,
+                 @Nonnull XLSParser parser,
+                 @Nonnull XLSFileReader reader,
+                 @Nonnull XLSFileWriter writer) {
+        super(formatter, parser, reader, writer);
+    }
+
+    @Nonnull
+    @Override
+    public String getCommand() {
+        return "xls";
     }
 }

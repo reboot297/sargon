@@ -16,25 +16,37 @@
 
 package com.reboot297.sargon.converter;
 
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
- * Converter for Android resources.
+ * Reader for the XLS files.
  */
-final class AndroidConverter extends BaseConverterImpl<String> {
+final class XLSFileReader implements BaseFileReader<Workbook> {
+
     @Inject
-    AndroidConverter(
-            @Nonnull AndroidFormatter formatter,
-            @Nonnull AndroidParser parser,
-            @Nonnull AndroidFileReader reader,
-            @Nonnull AndroidFileWriter writer) {
-        super(formatter, parser, reader, writer);
+    XLSFileReader() {
+
     }
 
-    @Nonnull
+    /**
+     * Open file and read it into workbook object.
+     *
+     * @param fileLocation path to file
+     * @returnn workbook or null
+     */
     @Override
-    public String getCommand() {
-        return "android";
+    public Workbook readFile(@Nonnull String fileLocation) {
+        try {
+            return new XSSFWorkbook(new FileInputStream(fileLocation));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

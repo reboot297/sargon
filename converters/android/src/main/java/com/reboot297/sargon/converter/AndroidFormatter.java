@@ -21,12 +21,19 @@ import com.reboot297.sargon.model.ItemType;
 import com.reboot297.sargon.model.StringItem;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.util.List;
 
 /**
  * Implementation of formatter for android.
  */
-final class AndroidFormatter implements BaseTextFormatter<String> {
+final class AndroidFormatter implements BaseFormatter<String> {
+
+    @Inject
+    AndroidFormatter() {
+
+    }
+
     @Override
     @Nonnull
     public String format(@Nonnull List<BaseItem> items) {

@@ -34,12 +34,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.google.dagger</groupId>
-            <artifactId>dagger</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.reboot297</groupId>
             <artifactId>core</artifactId>

@@ -17,23 +17,25 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.util.List;
 
 /**
- * Base formatter for text files.
- *
- * @param <T> type data
+ * Formatter for XLS files.
  */
-interface BaseTextFormatter<T> extends BaseFormatter<T> {
-    /**
-     * Convert items to different files format.
-     *
-     * @param items list of items
-     * @return data
-     */
-    @Nonnull
-    T format(List<BaseItem> items);
+final class XLSFormatter implements BaseFormatter<Workbook> {
 
+    @Inject
+    XLSFormatter() {
+
+    }
+
+    @Nonnull
+    @Override
+    public Workbook format(List<BaseItem> items) {
+        return null;
+    }
 }

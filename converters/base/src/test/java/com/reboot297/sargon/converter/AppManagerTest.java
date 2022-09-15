@@ -25,7 +25,7 @@ public class AppManagerTest {
 
     @Test
     public void testFormatXls() {
-        AppManager appManager = new AppManagerImpl();
+       // AppManager appManager = new AppManagerImpl();
         assertEquals("test", "test");
     }
 }
