@@ -20,6 +20,7 @@ import com.reboot297.sargon.manager.AppManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
@@ -76,7 +77,7 @@ public class MenuManager {
                 printVersion();
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            printHelp();
         }
     }
 
@@ -87,6 +88,15 @@ public class MenuManager {
         System.out.println("Sargon");
         System.out.println(getClass().getPackage().getImplementationVersion());
     }
+
+    /**
+     * Display help.
+     */
+    public void printHelp() {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("Sargon", options);
+    }
+
 
     /**
      * Open menu.
