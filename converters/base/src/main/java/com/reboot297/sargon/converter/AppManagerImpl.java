@@ -79,7 +79,9 @@ final class AppManagerImpl implements AppManager {
                            @Nonnull String to,
                            @Nonnull String sourcePath,
                            @Nonnull String destinationPath) {
-
+        System.out.println("Convert data from " + from + " to " + to);
+        System.out.println("Source path: " + sourcePath);
+        System.out.println("Destination path: " + destinationPath);
         var converterFrom = converters.get(from);
         var converterTo = converters.get(to);
         if (converterFrom != null && converterTo != null) {
@@ -87,12 +89,15 @@ final class AppManagerImpl implements AppManager {
             var items = converterFrom.getParser().parse(source);
             var result = converterTo.getFormatter().format(items);
             converterTo.getFileWriter().writeFile(result, destinationPath);
+            System.out.println("Covert data completed.");
             return true;
         }
+        System.err.println("Can't find converter");
         return false;
     }
 
     private void loadProperties() {
+        System.out.println("Load properties");
         appProps = new Properties();
         try {
             appProps.load(new FileInputStream(DEFAULT_PROPERTIES_PATH));
@@ -102,7 +107,7 @@ final class AppManagerImpl implements AppManager {
     }
 
     @Override
-    public Set<String> getAvailableCommands() {
+    public Set<String> getAvailableIds() {
         return converters.keySet();
     }
 }

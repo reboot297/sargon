@@ -14,19 +14,22 @@
  *
  */
 
-package com.reboot297.sargon;
+package com.reboot297.sargon.command;
 
-public class App {
-    /**
-     * Application component.
-     */
-    static AppComponent appComponent = DaggerAppComponent.builder().build();
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
-    /**
-     * Main method in the app.
-     * @param args arguments.
-     */
-    public static void main(String[] args) {
-        new MenuManager().start(args);
+public class ConverterCommandTest {
+
+    @Test
+    public void testGeneratingCommandLongName() {
+        var command = new ConvertersCommand("fromId", "toId", () ->{});
+        assertEquals("fromId-to-toId", command.getLongName());
+    }
+
+    @Test
+    public void testGeneratingCommandDescription() {
+        var command = new ConvertersCommand("fromId", "toId", () ->{});
+        assertEquals("Convert fromId to toId", command.getDescription());
     }
 }

@@ -16,17 +16,5 @@
 
 package com.reboot297.sargon;
 
-public class App {
-    /**
-     * Application component.
-     */
-    static AppComponent appComponent = DaggerAppComponent.builder().build();
-
-    /**
-     * Main method in the app.
-     * @param args arguments.
-     */
-    public static void main(String[] args) {
-        new MenuManager().start(args);
-    }
+public class MenuManagerTest {
 }
