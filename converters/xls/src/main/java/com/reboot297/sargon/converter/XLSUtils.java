@@ -23,10 +23,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 import javax.annotation.Nonnull;
 
 /**
- * Constants for parsing/formatting XLS tables
+ * Constants for parsing/formatting XLS tables.
  */
 final class XLSUtils {
 
+    /**
+     * Font height in points.
+     */
+    static final short HEADER_FONT_HEIGHT = 12;
     /**
      * Name of the main sheet.
      */

@@ -20,10 +20,12 @@ import com.reboot297.sargon.command.Command;
 import com.reboot297.sargon.command.ConvertersCommand;
 import com.reboot297.sargon.command.DefaultCommand;
 import com.reboot297.sargon.manager.AppManager;
+
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -141,7 +143,7 @@ public class MenuManager {
             var longName = cmd.getOptions()[0].getLongOpt();
             var command = findCommand(longName);
             command.getRunnable().run();
-        } catch (ParseException e) {
+        } catch (ParseException | ArrayIndexOutOfBoundsException e) {
             printHelp();
         }
     }

@@ -16,10 +16,15 @@
 
 package com.reboot297.sargon.converter;
 
+import static com.reboot297.sargon.converter.XLSUtils.HEADER_FONT_HEIGHT;
 import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.ItemType;
 import com.reboot297.sargon.model.StringItem;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -82,7 +87,7 @@ final class XLSFormatter implements BaseFormatter<Workbook> {
 
         XSSFFont font = workBook.createFont();
         font.setFontName("Arial");
-        font.setFontHeightInPoints((short) 12);
+        font.setFontHeightInPoints(HEADER_FONT_HEIGHT);
         font.setBold(true);
         headerStyle.setFont(font);
 
@@ -127,7 +132,7 @@ final class XLSFormatter implements BaseFormatter<Workbook> {
     }
 
     /**
-     * Add cells with id and default value
+     * Add cells with id and default value.
      *
      * @param item item
      * @param row  row
