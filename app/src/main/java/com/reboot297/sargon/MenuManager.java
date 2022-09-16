@@ -16,17 +16,19 @@
 
 package com.reboot297.sargon;
 
+import com.reboot297.sargon.command.Command;
+import com.reboot297.sargon.command.ConvertersCommand;
+import com.reboot297.sargon.command.DefaultCommand;
 import com.reboot297.sargon.manager.AppManager;
-import org.apache.commons.cli.CommandLine;
+import java.util.LinkedList;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-
-import javax.inject.Inject;
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.commons.cli.ParseException;
 
 public class MenuManager {
@@ -46,39 +48,56 @@ public class MenuManager {
     private final CommandLineParser parser = new DefaultParser();
 
     /**
+     * List of available commands.
+     */
+    private final List<Command> commands = new LinkedList<>();
+
+    /**
      * Constructor for MenuManager.
      */
     public MenuManager() {
         App.appComponent.inject(this);
-        var commands = new HashSet<String>(); //TODO make set of commands
-        //TODO add set of default commands
-        createOptions(commands);
+        createOptions(generateCommands());
     }
 
-    private void createOptions(Set<String> availableCommands) {
-        for (String cm : availableCommands) {
-            options.addOption(Option.builder()
-                    .longOpt(cm)
-                    .desc("Convert xls table to android xml")
-                    .build());
+    private List<Command> generateCommands() {
+        var ids = appManager.getAvailableIds();
+        for (var from : ids) {
+            for (var to : ids) {
+                if (!from.equals(to)) {
+                    commands.add(new ConvertersCommand(from, to, () -> appManager.convert(from, to)));
+                }
+            }
         }
 
+        commands.add(new DefaultCommand("v", "version", "Display app version", this::printVersion));
+        commands.add(new DefaultCommand("h", "help", "Display help", this::printHelp));
+        return commands;
+    }
+
+    private void createOptions(@Nonnull List<Command> availableCommands) {
+        for (Command cm : availableCommands) {
+            if (cm instanceof ConvertersCommand) {
+                addConverterCommandOption((ConvertersCommand) cm);
+            } else {
+                addDefaultCommandOption((DefaultCommand) cm);
+            }
+        }
+    }
+
+    private void addDefaultCommandOption(@Nonnull DefaultCommand command) {
         options.addOption(Option.builder()
-                .option("v")
-                .longOpt("version")
-                .desc("Display app version")
+                .option(command.getShortName())
+                .longOpt(command.getLongName())
+                .desc(command.getDescription())
                 .build());
     }
 
-    private void parse(String[] args) {
-        try {
-            CommandLine cmd = parser.parse(options, args);
-            if (cmd.hasOption("version")) {
-                printVersion();
-            }
-        } catch (ParseException e) {
-            printHelp();
-        }
+    private void addConverterCommandOption(@Nonnull ConvertersCommand command) {
+        options.addOption(Option.builder()
+                .longOpt(command.getLongName())
+                .desc(command.getDescription())
+                .build());
     }
 
     /**
@@ -93,17 +112,47 @@ public class MenuManager {
      * Display help.
      */
     public void printHelp() {
-        HelpFormatter formatter = new HelpFormatter();
+        var formatter = new HelpFormatter();
+        formatter.setOptionComparator(null);
         formatter.printHelp("Sargon", options);
     }
 
-
     /**
      * Open menu.
+     *
      * @param args arguments.
      */
     public void start(String[] args) {
-        parse(args);
+        parseArgs(args);
+    }
+
+    /**
+     * Parse Arguments from command line.
+     *
+     * @param args arguments
+     */
+    private void parseArgs(String[] args) {
+        try {
+            var cmd = parser.parse(options, args);
+            var longName = cmd.getOptions()[0].getLongOpt();
+            var command = findCommand(longName);
+            command.getRunnable().run();
+        } catch (ParseException e) {
+            printHelp();
+        }
+    }
+
+    /**
+     * Find command by long name.
+     *
+     * @param longName long name.
+     * @return command
+     */
+    private Command findCommand(@Nonnull String longName) {
+        return commands.stream()
+                .filter(c -> c.getLongName().equals(longName))
+                .findFirst()
+                .orElse(null);
     }
 
 }

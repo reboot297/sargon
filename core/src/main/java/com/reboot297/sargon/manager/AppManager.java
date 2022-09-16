@@ -47,11 +47,11 @@ public interface AppManager {
                     @Nonnull String sourcePath, @Nonnull String destinationPath);
 
     /**
-     * Get Set of available commands.
+     * Get Set of available ids.
      *
      * @return list of strings.
      */
-    Set<String> getAvailableCommands();
+    Set<String> getAvailableIds();
 
     /**
      * Add Converter.
