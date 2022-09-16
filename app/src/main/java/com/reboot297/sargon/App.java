@@ -27,6 +27,6 @@ public class App {
      * @param args arguments.
      */
     public static void main(String[] args) {
-        new MenuManager().start();
+        new MenuManager().start(args);
     }
 }

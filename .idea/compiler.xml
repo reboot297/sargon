@@ -31,8 +31,8 @@
         <module name="app" />
         <module name="core" />
         <module name="xls" />
-        <module name="base" />
         <module name="android" />
+        <module name="base" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

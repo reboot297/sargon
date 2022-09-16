@@ -17,8 +17,16 @@
 package com.reboot297.sargon;
 
 import com.reboot297.sargon.manager.AppManager;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 
 import javax.inject.Inject;
+import java.util.HashSet;
+import java.util.Set;
+import org.apache.commons.cli.ParseException;
 
 public class MenuManager {
     /**
@@ -28,20 +36,64 @@ public class MenuManager {
     AppManager appManager;
 
     /**
+     * List of options.
+     */
+    private final Options options = new Options();
+    /**
+     * Command line parser instance.
+     */
+    private final CommandLineParser parser = new DefaultParser();
+
+    /**
      * Constructor for MenuManager.
      */
     public MenuManager() {
         App.appComponent.inject(this);
+        var commands = new HashSet<String>(); //TODO make set of commands
+        //TODO add set of default commands
+        createOptions(commands);
+    }
+
+    private void createOptions(Set<String> availableCommands) {
+        for (String cm : availableCommands) {
+            options.addOption(Option.builder()
+                    .longOpt(cm)
+                    .desc("Convert xls table to android xml")
+                    .build());
+        }
+
+        options.addOption(Option.builder()
+                .option("v")
+                .longOpt("version")
+                .desc("Display app version")
+                .build());
+    }
+
+    private void parse(String[] args) {
+        try {
+            CommandLine cmd = parser.parse(options, args);
+            if (cmd.hasOption("version")) {
+                printVersion();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Print app version.
+     */
+    public void printVersion() {
+        System.out.println("Sargon");
+        System.out.println(getClass().getPackage().getImplementationVersion());
     }
 
     /**
      * Open menu.
+     * @param args arguments.
      */
-    public void start() {
-        System.out.println("Available convertors: ");
-        System.out.println(appManager.getAvailableCommands());
-        System.out.println("Convert");
-        appManager.convert("xls", "android");
+    public void start(String[] args) {
+        parse(args);
     }
 
 }
