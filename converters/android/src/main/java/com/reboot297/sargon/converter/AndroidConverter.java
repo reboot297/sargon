@@ -16,15 +16,14 @@
 
 package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.model.LocaleItem;
-
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.io.File;
 
 /**
  * Converter for Android resources.
  */
-final class AndroidConverter extends BaseConverterImpl<String, LocaleItem> {
+final class AndroidConverter extends BaseTextConverterImpl<String> {
     @Inject
     AndroidConverter(
             @Nonnull AndroidFormatter formatter,
@@ -41,7 +40,21 @@ final class AndroidConverter extends BaseConverterImpl<String, LocaleItem> {
     }
 
     @Override
-    public boolean isTable() {
-        return false;
+    String pathToLocaleFile(@Nonnull String rootFolder, @Nonnull String localeId) {
+        //TODO add unit test for generating path
+        String folderSuffix = localeId
+                .replace("Default", "")
+                .replace("_", "-r");
+
+        var builder = new StringBuilder();
+        builder.append(rootFolder).append(File.separator)
+                .append("values");
+        if (!folderSuffix.isEmpty()) {
+            builder.append("-").append(folderSuffix);
+        }
+        builder.append(File.separator)
+                .append("strings.xml");
+
+        return builder.toString();
     }
 }

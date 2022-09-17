@@ -119,10 +119,21 @@ final class AppManagerImpl implements AppManager {
         if (converter.isTable()) {
             var result = converter.getFormatter().format(items);
             return converter.getFileWriter().writeFile(result, destinationPath);
-        } else { //TODO write to many files
-            var result = converter.getFormatter().format(items.get(0));
-            return converter.getFileWriter().writeFile(result, destinationPath);
+        } else {
+            return writeToLocalFiles((BaseTextConverterImpl) converter, destinationPath, items);
         }
+    }
+
+    private boolean writeToLocalFiles(@Nonnull BaseTextConverterImpl converter,
+                                      @Nonnull String destinationPath,
+                                      @Nonnull List<LocaleItem> items) {
+        boolean success = false;
+        for (var item : items) {
+            var result = converter.getFormatter().format(item);
+            var path = converter.pathToLocaleFile(destinationPath, item.getId());
+            success |= converter.getFileWriter().writeFile(result, path);
+        }
+        return success;
     }
 
     private void loadProperties() {
