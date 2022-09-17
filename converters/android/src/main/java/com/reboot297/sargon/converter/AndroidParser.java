@@ -17,16 +17,18 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.LocaleItem;
 import com.reboot297.sargon.model.StringItem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
-final class AndroidParser implements BaseParser<String> {
+final class AndroidParser implements BaseParser<String, LocaleItem> {
 
     @Inject
     AndroidParser() {
@@ -35,8 +37,8 @@ final class AndroidParser implements BaseParser<String> {
 
     @Nullable
     @Override
-    public List<BaseItem> parse(@Nonnull String source) {
-        var result = new LinkedList<BaseItem>();
+    public LocaleItem parse(@Nonnull String source) {
+        var result = new ArrayList<BaseItem>();
 
         int position = 0;
         int nextPosition;
@@ -50,7 +52,7 @@ final class AndroidParser implements BaseParser<String> {
             position = nextPosition + 1;
         } while (nextPosition < source.length() - 1);
 
-        return result;
+        return new LocaleItem("", result);
     }
 
     private int parseResourcesBlock(String source, List<BaseItem> result, int nextPosition) {

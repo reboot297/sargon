@@ -16,13 +16,15 @@
 
 package com.reboot297.sargon.converter;
 
+import com.reboot297.sargon.model.LocaleItem;
+
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 /**
  * Converter for Android resources.
  */
-final class AndroidConverter extends BaseConverterImpl<String> {
+final class AndroidConverter extends BaseConverterImpl<String, LocaleItem> {
     @Inject
     AndroidConverter(
             @Nonnull AndroidFormatter formatter,
@@ -36,5 +38,10 @@ final class AndroidConverter extends BaseConverterImpl<String> {
     @Override
     public String getCommand() {
         return "android";
+    }
+
+    @Override
+    public boolean isTable() {
+        return false;
     }
 }

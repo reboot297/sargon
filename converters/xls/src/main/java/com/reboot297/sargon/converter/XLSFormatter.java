@@ -19,6 +19,7 @@ package com.reboot297.sargon.converter;
 import static com.reboot297.sargon.converter.XLSUtils.HEADER_FONT_HEIGHT;
 import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.ItemType;
+import com.reboot297.sargon.model.LocaleItem;
 import com.reboot297.sargon.model.StringItem;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -35,7 +36,7 @@ import java.util.List;
 /**
  * Formatter for XLS files.
  */
-final class XLSFormatter implements BaseFormatter<Workbook> {
+final class XLSFormatter implements BaseFormatter<List<LocaleItem>, Workbook> {
 
 
     /**
@@ -98,7 +99,7 @@ final class XLSFormatter implements BaseFormatter<Workbook> {
 
     @Nonnull
     @Override
-    public Workbook format(List<BaseItem> items) {
+    public Workbook format(@Nonnull List<LocaleItem> localeItems) {
 
         Workbook workbook = createTable();
 
@@ -110,6 +111,8 @@ final class XLSFormatter implements BaseFormatter<Workbook> {
         addHeaderCell(headerRow, XLSUtils.INDEX_COLUMN_ID, COLUMN_NAME_ID);
         addHeaderCell(headerRow, XLSUtils.INDEX_COLUMN_VALUE, COLUMN_NAME_DEFAULT_VALUE);
 
+        var defaultLocaleItem = localeItems.get(0);
+        var items = defaultLocaleItem.getItems();
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getType() != ItemType.EMPTY) {
                 addRow(items.get(i), sheet.createRow(i + 1));

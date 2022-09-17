@@ -16,15 +16,17 @@
 
 package com.reboot297.sargon.converter;
 
+import com.reboot297.sargon.model.LocaleItem;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Converter for xls.
  */
-final class XlsConverter extends BaseConverterImpl<Workbook> {
+final class XlsConverter extends BaseConverterImpl<Workbook, List<LocaleItem>> {
     /**
      * Constructor.
      *
@@ -45,5 +47,10 @@ final class XlsConverter extends BaseConverterImpl<Workbook> {
     @Override
     public String getCommand() {
         return "xls";
+    }
+
+    @Override
+    public boolean isTable() {
+        return true;
     }
 }

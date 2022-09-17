@@ -16,23 +16,22 @@
 
 package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.model.BaseItem;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * Base Parser for all types of data.
- * @param <T> type of the data.
+ *
+ * @param <S> type of source data.
+ * @param <R> type of result data
  */
-interface BaseParser<T> {
+interface BaseParser<S, R> {
     /**
-     * Parsing data into list of items.
+     * Parsing data.
      *
      * @param source like xml, json, xls
-     * @return list of items
+     * @return parsed data
      */
     @Nullable
-    List<BaseItem> parse(@Nonnull T source);
+    R parse(@Nonnull S source);
 }

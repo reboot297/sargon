@@ -17,6 +17,7 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.LocaleItem;
 import com.reboot297.sargon.model.StringItem;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -29,7 +30,7 @@ import java.util.List;
 /**
  * XLS Parser.
  */
-final class XLSParser implements BaseParser<Workbook> {
+final class XLSParser implements BaseParser<Workbook, List<LocaleItem>> {
     @Inject
     XLSParser() {
 
@@ -37,7 +38,7 @@ final class XLSParser implements BaseParser<Workbook> {
 
     @Nullable
     @Override
-    public List<BaseItem> parse(@Nonnull Workbook source) {
+    public List<LocaleItem> parse(@Nonnull Workbook source) {
         var items = new ArrayList<BaseItem>();
         var sheet = source.getSheetAt(0);
 
@@ -47,6 +48,7 @@ final class XLSParser implements BaseParser<Workbook> {
                 items.add(new StringItem(row.getCell(0).getStringCellValue(), row.getCell(1).getStringCellValue()));
             }
         }
-        return items;
+        var localeItem = new LocaleItem("", items);
+        return List.of(localeItem);
     }
 }

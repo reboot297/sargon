@@ -16,18 +16,17 @@
 
 package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.ItemType;
+import com.reboot297.sargon.model.LocaleItem;
 import com.reboot297.sargon.model.StringItem;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.List;
 
 /**
  * Implementation of formatter for android.
  */
-final class AndroidFormatter implements BaseFormatter<String> {
+final class AndroidFormatter implements BaseFormatter<LocaleItem, String> {
 
     @Inject
     AndroidFormatter() {
@@ -36,11 +35,11 @@ final class AndroidFormatter implements BaseFormatter<String> {
 
     @Override
     @Nonnull
-    public String format(@Nonnull List<BaseItem> items) {
+    public String format(@Nonnull LocaleItem localeItem) {
         var builder = new StringBuilder();
         builder.append(Constants.XML_HEADER).append(Constants.END_LINE)
                 .append(Constants.XML_TAG_RESOURCES_START).append(Constants.END_LINE);
-        for (var item : items) {
+        for (var item : localeItem.getItems()) {
             if (item.getType() == ItemType.STRING) {
                 writeStringItem(builder, (StringItem) item);
             }

@@ -21,28 +21,29 @@ import javax.annotation.Nonnull;
 /**
  * Base implementation for all convertors.
  *
- * @param <T> type of data.
+ * @param <R> type of remote data - string, table...
+ * @param <L> type of local data - list of items or one item
  */
-abstract class BaseConverterImpl<T> implements BaseConverter<T> {
+abstract class BaseConverterImpl<R, L> implements BaseConverter<R, L> {
     /**
      * Formatter instance.
      */
-    private final BaseFormatter<T> formatter;
+    private final BaseFormatter<L, R> formatter;
 
     /**
      * Parser instance.
      */
-    private final BaseParser<T> parser;
+    private final BaseParser<R, L> parser;
 
     /**
      * File reader instance.
      */
-    private final BaseFileReader<T> fileReader;
+    private final BaseFileReader<R> fileReader;
 
     /**
      * File writer instance.
      */
-    private final BaseFileWriter<T> fileWriter;
+    private final BaseFileWriter<R> fileWriter;
 
     /**
      * Constructor.
@@ -52,10 +53,10 @@ abstract class BaseConverterImpl<T> implements BaseConverter<T> {
      * @param reader file reader
      * @param writer file writer
      */
-    BaseConverterImpl(@Nonnull BaseFormatter<T> formatter,
-                      @Nonnull BaseParser<T> parser,
-                      @Nonnull BaseFileReader<T> reader,
-                      @Nonnull BaseFileWriter<T> writer) {
+    BaseConverterImpl(@Nonnull BaseFormatter<L, R> formatter,
+                      @Nonnull BaseParser<R, L> parser,
+                      @Nonnull BaseFileReader<R> reader,
+                      @Nonnull BaseFileWriter<R> writer) {
         this.formatter = formatter;
         this.parser = parser;
         this.fileReader = reader;
@@ -64,25 +65,25 @@ abstract class BaseConverterImpl<T> implements BaseConverter<T> {
 
     @Nonnull
     @Override
-    public BaseFormatter<T> getFormatter() {
+    public BaseFormatter<L, R> getFormatter() {
         return formatter;
     }
 
     @Nonnull
     @Override
-    public BaseParser<T> getParser() {
+    public BaseParser<R, L> getParser() {
         return parser;
     }
 
     @Nonnull
     @Override
-    public BaseFileReader<T> getFileReader() {
+    public BaseFileReader<R> getFileReader() {
         return fileReader;
     }
 
     @Nonnull
     @Override
-    public BaseFileWriter<T> getFileWriter() {
+    public BaseFileWriter<R> getFileWriter() {
         return fileWriter;
     }
 }

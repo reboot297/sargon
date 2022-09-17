@@ -21,15 +21,24 @@ import javax.annotation.Nonnull;
 /**
  * Base converter.
  *
- * @param <T> type of data.
+ * @param <R> type of remote data - string, table...
+ * @param <L> type of local data - list of items or one item
  */
-public interface BaseConverter<T> {
+public interface BaseConverter<R, L> {
     /**
      * Unique command from this converter.
+     *
      * @return command
      */
     @Nonnull
     String getCommand();
+
+    /**
+     * Check if supports many locales in one file.
+     *
+     * @return true if it is the converter for the table.
+     */
+    boolean isTable();
 
     /**
      * Current formatter.<br/>
@@ -38,7 +47,7 @@ public interface BaseConverter<T> {
      * @return formatter.
      */
     @Nonnull
-    BaseFormatter<T> getFormatter();
+    BaseFormatter<L, R> getFormatter();
 
     /**
      * Current parser.<br/>
@@ -47,7 +56,7 @@ public interface BaseConverter<T> {
      * @return parser.
      */
     @Nonnull
-    BaseParser<T> getParser();
+    BaseParser<R, L> getParser();
 
     /**
      * Base class to read data from files.
@@ -56,7 +65,7 @@ public interface BaseConverter<T> {
      */
 
     @Nonnull
-    BaseFileReader<T> getFileReader();
+    BaseFileReader<R> getFileReader();
 
     /**
      * Base class to write data to files.
@@ -64,6 +73,6 @@ public interface BaseConverter<T> {
      * @return writer instance
      */
     @Nonnull
-    BaseFileWriter<T> getFileWriter();
+    BaseFileWriter<R> getFileWriter();
 
 }

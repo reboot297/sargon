@@ -37,7 +37,7 @@ public class XLSParserTest {
 
 
         var xlsParser = new XLSParser();
-        var items = xlsParser.parse(workbook);
+        var items = xlsParser.parse(workbook).get(0).getItems();
 
         assertEquals(ItemType.STRING, items.get(0).getType());
         assertEquals("simple_string", ((StringItem) items.get(0)).getId());

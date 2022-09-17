@@ -33,7 +33,7 @@ public class AndroidParserTest {
                 "</resources>\n";
 
         var parser = new AndroidParser();
-        List<BaseItem> items = parser.parse(source);
+        List<BaseItem> items = parser.parse(source).getItems();
 
         assertEquals(1, items.size());
         assertEquals(ItemType.STRING, items.get(0).getType());

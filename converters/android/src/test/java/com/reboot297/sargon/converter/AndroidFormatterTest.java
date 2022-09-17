@@ -17,6 +17,7 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.LocaleItem;
 import com.reboot297.sargon.model.StringItem;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,8 @@ public class AndroidFormatterTest {
 
         List<BaseItem> items = new LinkedList<>();
         items.add(new StringItem("simple_string", "Simple String"));
-        String result = formatter.format(items);
+        var localeItem = new LocaleItem("", items);
+        String result = formatter.format(localeItem);
         assertEquals(output, result);
     }
 }

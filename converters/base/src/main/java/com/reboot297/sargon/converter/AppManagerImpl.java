@@ -17,12 +17,15 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.manager.AppManager;
+import com.reboot297.sargon.model.LocaleItem;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -67,7 +70,7 @@ final class AppManagerImpl implements AppManager {
     }
 
     @Override
-    public boolean convert(String from, String to) {
+    public boolean convert(String from, String to) { //TODO run in background thread
         loadProperties();
         var inputFilePath = appProps.getProperty(from + PROPERTIES_SUFFIX_INPUT);
         var outputFilePath = appProps.getProperty(to + PROPERTIES_SUFFIX_OUTPUT);
@@ -82,18 +85,44 @@ final class AppManagerImpl implements AppManager {
         System.out.println("Convert data from " + from + " to " + to);
         System.out.println("Source path: " + sourcePath);
         System.out.println("Destination path: " + destinationPath);
+        var result = false;
         var converterFrom = converters.get(from);
         var converterTo = converters.get(to);
         if (converterFrom != null && converterTo != null) {
-            var source = converterFrom.getFileReader().readFile(sourcePath);
-            var items = converterFrom.getParser().parse(source);
-            var result = converterTo.getFormatter().format(items);
-            converterTo.getFileWriter().writeFile(result, destinationPath);
-            System.out.println("Covert data completed.");
-            return true;
+            var items = readLocaleItems(sourcePath, converterFrom);
+            result = writeLocaleFiles(destinationPath, converterTo, items);
+            System.out.println("Convert data completed. success: " + result);
+        } else {
+            System.err.println("Can't find converter");
         }
-        System.err.println("Can't find converter");
-        return false;
+        return result;
+    }
+
+    private List<LocaleItem> readLocaleItems(@Nonnull String sourcePath,
+                                             @Nonnull BaseConverter converter) {
+        var localeItems = new ArrayList<LocaleItem>();
+        if (converter.isTable()) {
+            var source = converter.getFileReader().readFile(sourcePath);
+            var item = converter.getParser().parse(source);
+            return (List<LocaleItem>) item;
+        } else { //TODO read all files and parse them to the list
+            var source = converter.getFileReader().readFile(sourcePath);
+            var item = converter.getParser().parse(source);
+            localeItems.add((LocaleItem) item);
+        }
+        return localeItems;
+    }
+
+    private boolean writeLocaleFiles(@Nonnull String destinationPath,
+                                     @Nonnull BaseConverter converter,
+                                     @Nonnull List<LocaleItem> items) {
+        if (converter.isTable()) {
+            var result = converter.getFormatter().format(items);
+            return converter.getFileWriter().writeFile(result, destinationPath);
+        } else { //TODO write to many files
+            var result = converter.getFormatter().format(items.get(0));
+            return converter.getFileWriter().writeFile(result, destinationPath);
+        }
     }
 
     private void loadProperties() {

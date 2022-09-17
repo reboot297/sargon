@@ -17,6 +17,7 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.LocaleItem;
 import com.reboot297.sargon.model.StringItem;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +35,7 @@ public class XLSFormatterTest {
         List<BaseItem> items = new LinkedList<>();
         items.add(new StringItem("simple_string", "Simple String"));
 
-        var workbook = formatter.format(items);
+        var workbook = formatter.format(List.of(new LocaleItem("", items)));
 
         var sheet = workbook.getSheet("Default Strings");
         var headerRow = sheet.getRow(0);
