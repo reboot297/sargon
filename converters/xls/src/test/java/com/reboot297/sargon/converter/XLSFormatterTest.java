@@ -19,31 +19,44 @@ package com.reboot297.sargon.converter;
 import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.LocaleItem;
 import com.reboot297.sargon.model.StringItem;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
 
 public class XLSFormatterTest {
 
     @Test
     public void testFormatXlsString() {
 
-        XLSFormatter formatter = new XLSFormatter();
-        List<BaseItem> items = new LinkedList<>();
+        var formatter = new XLSFormatter();
+        var locales = new ArrayList<LocaleItem>();
+        var items = new ArrayList<BaseItem>();
         items.add(new StringItem("simple_string", "Simple String"));
+        locales.add(new LocaleItem("Default", items));
 
-        var workbook = formatter.format(List.of(new LocaleItem("", items)));
+        items = new ArrayList<>();
+        items.add(new StringItem("simple_string", "Simple En String"));
+        locales.add(new LocaleItem("en", items));
+
+        items = new ArrayList<>();
+        items.add(new StringItem("simple_string", "Simple En_US String"));
+        locales.add(new LocaleItem("en_US", items));
+
+
+        var workbook = formatter.format(locales);
 
         var sheet = workbook.getSheet("Default Strings");
         var headerRow = sheet.getRow(0);
         assertEquals("ID", headerRow.getCell(0).getStringCellValue());
         assertEquals("Default", headerRow.getCell(1).getStringCellValue());
+        assertEquals("en", headerRow.getCell(2).getStringCellValue());
+        assertEquals("en_US", headerRow.getCell(3).getStringCellValue());
 
         var dataRow = sheet.getRow(1);
         assertEquals("simple_string", dataRow.getCell(0).getStringCellValue());
         assertEquals("Simple String", dataRow.getCell(1).getStringCellValue());
+        assertEquals("Simple En String", dataRow.getCell(2).getStringCellValue());
+        assertEquals("Simple En_US String", dataRow.getCell(3).getStringCellValue());
     }
 }
