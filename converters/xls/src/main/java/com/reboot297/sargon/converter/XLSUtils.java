@@ -62,7 +62,7 @@ final class XLSUtils {
     /**
      * Second column is reserved for default value.
      */
-    static final int INDEX_COLUMN_VALUE = 1;
+    static final int INDEX_COLUMN_DEFAULT_VALUE = 1;
 
     /**
      * Get header row.

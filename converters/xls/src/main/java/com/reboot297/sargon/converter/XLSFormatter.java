@@ -20,6 +20,7 @@ import static com.reboot297.sargon.converter.XLSUtils.HEADER_FONT_HEIGHT;
 import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.ItemType;
 import com.reboot297.sargon.model.LocaleItem;
+import static com.reboot297.sargon.model.LocaleItem.DEFAULT_LOCALE_VALUE_NAME;
 import com.reboot297.sargon.model.StringItem;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -48,10 +49,6 @@ final class XLSFormatter implements BaseFormatter<List<LocaleItem>, Workbook> {
      * Name for column with id item.
      */
     private static final String COLUMN_NAME_ID = "ID";
-    /**
-     * Name for column with default value.
-     */
-    private static final String COLUMN_NAME_DEFAULT_VALUE = "Default value";
 
     /**
      * Style for header cell.
@@ -105,11 +102,11 @@ final class XLSFormatter implements BaseFormatter<List<LocaleItem>, Workbook> {
 
         var sheet = workbook.createSheet(XLSUtils.DEFAULT_SHEET_NAME);
         sheet.setColumnWidth(XLSUtils.INDEX_COLUMN_ID, COLUMN_WIDTH);
-        sheet.setColumnWidth(XLSUtils.INDEX_COLUMN_VALUE, COLUMN_WIDTH);
+        sheet.setColumnWidth(XLSUtils.INDEX_COLUMN_DEFAULT_VALUE, COLUMN_WIDTH);
 
         Row headerRow = sheet.createRow(XLSUtils.INDEX_ROW_HEADER);
         addHeaderCell(headerRow, XLSUtils.INDEX_COLUMN_ID, COLUMN_NAME_ID);
-        addHeaderCell(headerRow, XLSUtils.INDEX_COLUMN_VALUE, COLUMN_NAME_DEFAULT_VALUE);
+        addHeaderCell(headerRow, XLSUtils.INDEX_COLUMN_DEFAULT_VALUE, DEFAULT_LOCALE_VALUE_NAME);
 
         var defaultLocaleItem = localeItems.get(0);
         var items = defaultLocaleItem.getItems();
@@ -146,7 +143,7 @@ final class XLSFormatter implements BaseFormatter<List<LocaleItem>, Workbook> {
             cell.setCellValue(((StringItem) item).getId());
             cell.setCellStyle(cellStyle);
 
-            cell = row.createCell(XLSUtils.INDEX_COLUMN_VALUE);
+            cell = row.createCell(XLSUtils.INDEX_COLUMN_DEFAULT_VALUE);
             cell.setCellValue(((StringItem) item).getValue());
             cell.setCellStyle(cellStyle);
         }

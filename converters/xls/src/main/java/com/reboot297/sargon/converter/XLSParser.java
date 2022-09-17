@@ -16,7 +16,8 @@
 
 package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.model.BaseItem;
+import static com.reboot297.sargon.converter.XLSUtils.INDEX_COLUMN_DEFAULT_VALUE;
+import static com.reboot297.sargon.converter.XLSUtils.INDEX_COLUMN_ID;
 import com.reboot297.sargon.model.LocaleItem;
 import com.reboot297.sargon.model.StringItem;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -39,16 +40,27 @@ final class XLSParser implements BaseParser<Workbook, List<LocaleItem>> {
     @Nullable
     @Override
     public List<LocaleItem> parse(@Nonnull Workbook source) {
-        var items = new ArrayList<BaseItem>();
         var sheet = source.getSheetAt(0);
+        var localeItems = new ArrayList<LocaleItem>();
+        var headerRow = sheet.getRow(0);
+        for (int i = 1; headerRow.getCell(i) != null; i++) {
+            var localeName = headerRow.getCell(i).getStringCellValue();
+            //TODO check if name is valid
+            localeItems.add(new LocaleItem(localeName, new ArrayList<>()));
+        }
 
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             var row = sheet.getRow(i);
             if (row != null) {
-                items.add(new StringItem(row.getCell(0).getStringCellValue(), row.getCell(1).getStringCellValue()));
+                var cellId = row.getCell(INDEX_COLUMN_ID);
+                if (cellId != null) {
+                    for (int j = INDEX_COLUMN_DEFAULT_VALUE; j < row.getLastCellNum(); j++) {
+                        localeItems.get(j - 1).getItems().add(
+                                new StringItem(cellId.getStringCellValue(), row.getCell(j).getStringCellValue()));
+                    }
+                }
             }
         }
-        var localeItem = new LocaleItem("", items);
-        return List.of(localeItem);
+        return localeItems;
     }
 }

@@ -24,6 +24,11 @@ import java.util.List;
 public final class LocaleItem {
 
     /**
+     * The name for default locale.
+     */
+    public static final String DEFAULT_LOCALE_VALUE_NAME = "Default";
+
+    /**
      * Locale Id.
      */
     private final String id;

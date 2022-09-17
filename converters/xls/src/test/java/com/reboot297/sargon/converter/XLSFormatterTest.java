@@ -40,7 +40,7 @@ public class XLSFormatterTest {
         var sheet = workbook.getSheet("Default Strings");
         var headerRow = sheet.getRow(0);
         assertEquals("ID", headerRow.getCell(0).getStringCellValue());
-        assertEquals("Default value", headerRow.getCell(1).getStringCellValue());
+        assertEquals("Default", headerRow.getCell(1).getStringCellValue());
 
         var dataRow = sheet.getRow(1);
         assertEquals("simple_string", dataRow.getCell(0).getStringCellValue());
