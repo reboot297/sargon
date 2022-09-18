@@ -17,25 +17,28 @@
 package com.reboot297.sargon.converter;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import java.util.Locale;
 
 /**
- * Converter for Android resources.
+ * Base interface to work with locales.
  */
-final class AndroidConverter extends BaseTextConverterImpl<String> {
-    @Inject
-    AndroidConverter(
-            @Nonnull AndroidFormatter formatter,
-            @Nonnull AndroidParser parser,
-            @Nonnull AndroidFileReader reader,
-            @Nonnull AndroidFileWriter writer,
-            @Nonnull AndroidLocaleManager localeManager) {
-        super(formatter, parser, reader, writer, localeManager);
-    }
+interface BaseLocaleManager {
 
+    /**
+     * Extract locale object from name of the file or column name of table.
+     *
+     * @param text name
+     * @return Locale object
+     */
     @Nonnull
-    @Override
-    public String getCommand() {
-        return "android";
-    }
+    Locale extractLocale(@Nonnull String text);
+
+    /**
+     * Generate name from locale object.
+     *
+     * @param locale locale
+     * @return name.
+     */
+    @Nonnull
+    String nameFromLocale(@Nonnull Locale locale);
 }

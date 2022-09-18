@@ -16,24 +16,32 @@
 
 package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.model.LocaleItem;
+import com.reboot297.sargon.model.BaseItem;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
-abstract class BaseTextConverterImpl<R> extends BaseConverterImpl<R, LocaleItem> {
+/**
+ * Base implementation for text convertors.
+ *
+ * @param <R> type of remote data
+ */
+abstract class BaseTextConverterImpl<R> extends BaseConverterImpl<R, List<BaseItem>> {
     /**
      * Constructor.
      *
-     * @param formatter default formatter
-     * @param parser    default parser
-     * @param reader    file reader
-     * @param writer    file writer
+     * @param formatter     default formatter
+     * @param parser        default parser
+     * @param reader        file reader
+     * @param writer        file writer
+     * @param localeManager locale manager
      */
-    BaseTextConverterImpl(@Nonnull BaseFormatter<LocaleItem, R> formatter,
-                          @Nonnull BaseParser<R, LocaleItem> parser,
+    BaseTextConverterImpl(@Nonnull BaseFormatter<List<BaseItem>, R> formatter,
+                          @Nonnull BaseParser<R, List<BaseItem>> parser,
                           @Nonnull BaseFileReader<R> reader,
-                          @Nonnull BaseFileWriter<R> writer) {
-        super(formatter, parser, reader, writer);
+                          @Nonnull BaseFileWriter<R> writer,
+                          @Nonnull TextLocaleManager localeManager) {
+        super(formatter, parser, reader, writer, localeManager);
     }
 
     @Override
@@ -41,6 +49,14 @@ abstract class BaseTextConverterImpl<R> extends BaseConverterImpl<R, LocaleItem>
         return false;
     }
 
-    abstract String pathToLocaleFile(@Nonnull String rootFolder, @Nonnull String localeId);
-
+    /**
+     * Get Locale manager for text converters.
+     *
+     * @return locale manager
+     */
+    @Nonnull
+    @Override
+    public TextLocaleManager getLocaleManager() {
+        return (TextLocaleManager) super.getLocaleManager();
+    }
 }

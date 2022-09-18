@@ -17,31 +17,38 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
-import com.reboot297.sargon.model.LocaleItem;
+import com.reboot297.sargon.model.LocaleGroup;
 import com.reboot297.sargon.model.StringItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
+/**
+ * Test cases for XLS formatter.
+ */
 public class XLSFormatterTest {
 
+    /**
+     * Creating workbook from list of items.
+     */
     @Test
     public void testFormatXlsString() {
 
-        var formatter = new XLSFormatter();
-        var locales = new ArrayList<LocaleItem>();
+        var formatter = new XLSFormatter(new XlsLocaleManager());
+        var locales = new ArrayList<LocaleGroup>();
         var items = new ArrayList<BaseItem>();
         items.add(new StringItem("simple_string", "Simple String"));
-        locales.add(new LocaleItem("Default", items));
+        locales.add(new LocaleGroup(new Locale("", ""), items));
 
         items = new ArrayList<>();
         items.add(new StringItem("simple_string", "Simple En String"));
-        locales.add(new LocaleItem("en", items));
+        locales.add(new LocaleGroup(new Locale("en"), items));
 
         items = new ArrayList<>();
         items.add(new StringItem("simple_string", "Simple En_US String"));
-        locales.add(new LocaleItem("en_US", items));
+        locales.add(new LocaleGroup(new Locale("en", "us"), items));
 
 
         var workbook = formatter.format(locales);

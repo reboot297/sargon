@@ -20,7 +20,7 @@ import static com.reboot297.sargon.converter.XLSUtils.HEADER_FONT_HEIGHT;
 import static com.reboot297.sargon.converter.XLSUtils.INDEX_COLUMN_ID;
 import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.ItemType;
-import com.reboot297.sargon.model.LocaleItem;
+import com.reboot297.sargon.model.LocaleGroup;
 import com.reboot297.sargon.model.StringItem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 /**
  * Formatter for XLS files.
  */
-final class XLSFormatter implements BaseFormatter<List<LocaleItem>, Workbook> {
+final class XLSFormatter implements BaseFormatter<List<LocaleGroup>, Workbook> {
 
 
     /**
@@ -56,19 +56,21 @@ final class XLSFormatter implements BaseFormatter<List<LocaleItem>, Workbook> {
     /**
      * Style for header cell.
      */
-    @Nonnull
     private CellStyle headerStyle;
 
     /**
      * Style for cells.
      */
-    @Nonnull
     private CellStyle cellStyle;
 
+    /**
+     * LocaleManager instance.
+     */
+    private final BaseLocaleManager localeManager;
 
     @Inject
-    XLSFormatter() {
-
+    XLSFormatter(@Nonnull XlsLocaleManager localeManager) {
+        this.localeManager = localeManager;
     }
 
 
@@ -97,9 +99,15 @@ final class XLSFormatter implements BaseFormatter<List<LocaleItem>, Workbook> {
         return workBook;
     }
 
+    /**
+     * Convert list of localized strings into the table.
+     *
+     * @param localeItems source data
+     * @return workbook
+     */
     @Nonnull
     @Override
-    public Workbook format(@Nonnull List<LocaleItem> localeItems) {
+    public Workbook format(@Nonnull List<LocaleGroup> localeItems) {
 
         var workbook = createTable();
         var sheet = workbook.createSheet(XLSUtils.DEFAULT_SHEET_NAME);
@@ -125,9 +133,9 @@ final class XLSFormatter implements BaseFormatter<List<LocaleItem>, Workbook> {
      * @return list of base items
      */
     @Nonnull
-    private static List<BaseItem> getRowValues(int rowPosition, @Nonnull List<LocaleItem> localeItems) {
+    private static List<BaseItem> getRowValues(int rowPosition, @Nonnull List<LocaleGroup> localeItems) {
         return localeItems.stream()
-                .map(LocaleItem::getItems)
+                .map(LocaleGroup::getItems)
                 .map(list -> list.get(rowPosition))
                 .collect(Collectors.toList());
     }
@@ -138,12 +146,13 @@ final class XLSFormatter implements BaseFormatter<List<LocaleItem>, Workbook> {
      * @param sheet       sheet
      * @param localeItems list of locale items
      */
-    private void addHeaderRow(@Nonnull Sheet sheet, @Nonnull List<LocaleItem> localeItems) {
+    private void addHeaderRow(@Nonnull Sheet sheet, @Nonnull List<LocaleGroup> localeItems) {
         var headerRow = sheet.createRow(XLSUtils.INDEX_ROW_HEADER);
         addHeaderCell(headerRow, INDEX_COLUMN_ID, COLUMN_NAME_ID);
 
         for (int i = 0; i < localeItems.size(); i++) {
-            addHeaderCell(headerRow, i + 1, localeItems.get(i).getId());
+            var name = localeManager.nameFromLocale(localeItems.get(i).getLocale());
+            addHeaderCell(headerRow, i + 1, name);
         }
     }
 

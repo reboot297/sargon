@@ -16,22 +16,19 @@
 
 package com.reboot297.sargon.model;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Class contains list items for specific locale.
  */
-public final class LocaleItem {
-
-    /**
-     * The name for default locale.
-     */
-    public static final String DEFAULT_LOCALE_VALUE_NAME = "Default";
+public final class LocaleGroup {
 
     /**
      * Locale Id.
      */
-    private final String id;
+    private final Locale locale;
 
     /**
      * List of items.
@@ -41,21 +38,22 @@ public final class LocaleItem {
     /**
      * Default constructor.
      *
-     * @param id id of locale
-     * @param items list of the items
+     * @param locale locale
+     * @param items  list of the items
      */
-    public LocaleItem(String id, List<BaseItem> items) {
-        this.id = id;
+    public LocaleGroup(@Nonnull Locale locale, @Nonnull List<BaseItem> items) {
+        this.locale = locale;
         this.items = items;
     }
 
     /**
-     * Get locale id.
+     * Get locale.
      *
-     * @return string value
+     * @return Locale object
      */
-    public String getId() {
-        return id;
+    @Nonnull
+    public Locale getLocale() {
+        return locale;
     }
 
     /**
@@ -63,6 +61,7 @@ public final class LocaleItem {
      *
      * @return list items.
      */
+    @Nonnull
     public List<BaseItem> getItems() {
         return items;
     }

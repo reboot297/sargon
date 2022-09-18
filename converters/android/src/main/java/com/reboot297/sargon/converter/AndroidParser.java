@@ -17,7 +17,6 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
-import com.reboot297.sargon.model.LocaleItem;
 import com.reboot297.sargon.model.StringItem;
 
 import javax.annotation.Nonnull;
@@ -28,16 +27,28 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
-final class AndroidParser implements BaseParser<String, LocaleItem> {
+/**
+ * Parser for android strings.
+ */
+final class AndroidParser implements BaseParser<String, List<BaseItem>> {
 
+    /**
+     * Default constructor.
+     */
     @Inject
     AndroidParser() {
 
     }
 
+    /**
+     * Parse android source data into the list of items.
+     *
+     * @param source like xml, json, xls
+     * @return list of data.
+     */
     @Nullable
     @Override
-    public LocaleItem parse(@Nonnull String source) {
+    public List<BaseItem> parse(@Nonnull String source) {
         var result = new ArrayList<BaseItem>();
 
         int position = 0;
@@ -52,7 +63,7 @@ final class AndroidParser implements BaseParser<String, LocaleItem> {
             position = nextPosition + 1;
         } while (nextPosition < source.length() - 1);
 
-        return new LocaleItem("", result);
+        return result;
     }
 
     private int parseResourcesBlock(String source, List<BaseItem> result, int nextPosition) {

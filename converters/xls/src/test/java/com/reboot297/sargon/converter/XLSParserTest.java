@@ -44,25 +44,29 @@ public class XLSParserTest {
         row.createCell(3).setCellValue("SimplE En-US STring");
 
 
-        var xlsParser = new XLSParser();
+        var xlsParser = new XLSParser(new XlsLocaleManager());
         var localeItems = xlsParser.parse(workbook);
 
+        //noinspection ConstantConditions
         var defaultLocale = localeItems.get(0);
-        assertEquals("Default", defaultLocale.getId());
+        assertEquals("", defaultLocale.getLocale().getLanguage());
+        assertEquals("", defaultLocale.getLocale().getCountry());
         var items = defaultLocale.getItems();
         assertEquals(ItemType.STRING, items.get(0).getType());
         assertEquals("simple_string", ((StringItem) items.get(0)).getId());
         assertEquals("SimplE STring", ((StringItem) items.get(0)).getValue());
 
         var enLocale = localeItems.get(1);
-        assertEquals("en", enLocale.getId());
+        assertEquals("en", enLocale.getLocale().getLanguage());
+        assertEquals("", enLocale.getLocale().getCountry());
         items = enLocale.getItems();
         assertEquals(ItemType.STRING, items.get(0).getType());
         assertEquals("simple_string", ((StringItem) items.get(0)).getId());
         assertEquals("SimplE en STring", ((StringItem) items.get(0)).getValue());
 
         var enUSLocale = localeItems.get(2);
-        assertEquals("en_US", enUSLocale.getId());
+        assertEquals("en", enUSLocale.getLocale().getLanguage());
+        assertEquals("US", enUSLocale.getLocale().getCountry());
         items = enUSLocale.getItems();
         assertEquals(ItemType.STRING, items.get(0).getType());
         assertEquals("simple_string", ((StringItem) items.get(0)).getId());

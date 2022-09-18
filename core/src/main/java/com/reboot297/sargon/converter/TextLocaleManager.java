@@ -16,26 +16,33 @@
 
 package com.reboot297.sargon.converter;
 
+import com.reboot297.sargon.model.LocalePath;
+
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import java.util.List;
+import java.util.Locale;
 
 /**
- * Converter for Android resources.
+ * Interface help to extract locale from file path.
  */
-final class AndroidConverter extends BaseTextConverterImpl<String> {
-    @Inject
-    AndroidConverter(
-            @Nonnull AndroidFormatter formatter,
-            @Nonnull AndroidParser parser,
-            @Nonnull AndroidFileReader reader,
-            @Nonnull AndroidFileWriter writer,
-            @Nonnull AndroidLocaleManager localeManager) {
-        super(formatter, parser, reader, writer, localeManager);
-    }
+interface TextLocaleManager extends BaseLocaleManager {
 
+    /**
+     * Get path to local file.
+     *
+     * @param rootFolder root folder
+     * @param locale     locale
+     * @return path
+     */
     @Nonnull
-    @Override
-    public String getCommand() {
-        return "android";
-    }
+    String pathToLocaleFile(@Nonnull String rootFolder, @Nonnull Locale locale);
+
+    /**
+     * Find list of files in root directory.
+     *
+     * @param rootFolder root folder
+     * @return list of object with path to files
+     */
+    @Nonnull
+    List<LocalePath> findFiles(@Nonnull String rootFolder);
 }

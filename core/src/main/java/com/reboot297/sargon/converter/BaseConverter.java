@@ -75,4 +75,12 @@ public interface BaseConverter<R, L> {
     @Nonnull
     BaseFileWriter<R> getFileWriter();
 
+    /**
+     * Manager for locales.
+     *
+     * @return manager object
+     */
+    @Nonnull
+    BaseLocaleManager getLocaleManager();
+
 }

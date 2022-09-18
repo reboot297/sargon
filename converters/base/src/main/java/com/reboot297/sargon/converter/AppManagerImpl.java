@@ -17,7 +17,9 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.manager.AppManager;
-import com.reboot297.sargon.model.LocaleItem;
+import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.LocaleGroup;
+import com.reboot297.sargon.model.LocalePath;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -98,24 +100,28 @@ final class AppManagerImpl implements AppManager {
         return result;
     }
 
-    private List<LocaleItem> readLocaleItems(@Nonnull String sourcePath,
-                                             @Nonnull BaseConverter converter) {
-        var localeItems = new ArrayList<LocaleItem>();
+    private List<LocaleGroup> readLocaleItems(@Nonnull String sourcePath,
+                                              @Nonnull BaseConverter converter) {
+        var localeItems = new ArrayList<LocaleGroup>();
         if (converter.isTable()) {
             var source = converter.getFileReader().readFile(sourcePath);
             var item = converter.getParser().parse(source);
-            return (List<LocaleItem>) item;
-        } else { //TODO read all files and parse them to the list
-            var source = converter.getFileReader().readFile(sourcePath);
-            var item = converter.getParser().parse(source);
-            localeItems.add((LocaleItem) item);
+            return (List<LocaleGroup>) item;
+        } else {
+            BaseTextConverterImpl converter1 = (BaseTextConverterImpl) converter;
+            List<LocalePath> pathToFiles = converter1.getLocaleManager().findFiles(sourcePath);
+            for (var path: pathToFiles) {
+                var source = converter.getFileReader().readFile(path.getLocalePath());
+                var item = converter.getParser().parse(source);
+                localeItems.add(new LocaleGroup(path.getLocale(), (List<BaseItem>) item));
+            }
         }
         return localeItems;
     }
 
     private boolean writeLocaleFiles(@Nonnull String destinationPath,
                                      @Nonnull BaseConverter converter,
-                                     @Nonnull List<LocaleItem> items) {
+                                     @Nonnull List<LocaleGroup> items) {
         if (converter.isTable()) {
             var result = converter.getFormatter().format(items);
             return converter.getFileWriter().writeFile(result, destinationPath);
@@ -126,11 +132,11 @@ final class AppManagerImpl implements AppManager {
 
     private boolean writeToLocalFiles(@Nonnull BaseTextConverterImpl converter,
                                       @Nonnull String destinationPath,
-                                      @Nonnull List<LocaleItem> items) {
+                                      @Nonnull List<LocaleGroup> items) {
         boolean success = false;
         for (var item : items) {
-            var result = converter.getFormatter().format(item);
-            var path = converter.pathToLocaleFile(destinationPath, item.getId());
+            var result = converter.getFormatter().format(item.getItems());
+            var path = converter.getLocaleManager().pathToLocaleFile(destinationPath, item.getLocale());
             success |= converter.getFileWriter().writeFile(result, path);
         }
         return success;

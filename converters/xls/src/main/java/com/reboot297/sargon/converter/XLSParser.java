@@ -18,7 +18,7 @@ package com.reboot297.sargon.converter;
 
 import static com.reboot297.sargon.converter.XLSUtils.INDEX_COLUMN_DEFAULT_VALUE;
 import static com.reboot297.sargon.converter.XLSUtils.INDEX_COLUMN_ID;
-import com.reboot297.sargon.model.LocaleItem;
+import com.reboot297.sargon.model.LocaleGroup;
 import com.reboot297.sargon.model.StringItem;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -31,22 +31,33 @@ import java.util.List;
 /**
  * XLS Parser.
  */
-final class XLSParser implements BaseParser<Workbook, List<LocaleItem>> {
-    @Inject
-    XLSParser() {
+final class XLSParser implements BaseParser<Workbook, List<LocaleGroup>> {
 
+    /**
+     * Locale manager instance.
+     */
+    private final BaseLocaleManager localeManager;
+
+    /**
+     * Default constructor.
+     *
+     * @param localeManager locale manager.
+     */
+    @Inject
+    XLSParser(@Nonnull XlsLocaleManager localeManager) {
+        this.localeManager = localeManager;
     }
 
     @Nullable
     @Override
-    public List<LocaleItem> parse(@Nonnull Workbook source) {
+    public List<LocaleGroup> parse(@Nonnull Workbook source) {
         var sheet = source.getSheetAt(0);
-        var localeItems = new ArrayList<LocaleItem>();
+        var localeItems = new ArrayList<LocaleGroup>();
         var headerRow = sheet.getRow(0);
         for (int i = 1; headerRow.getCell(i) != null; i++) {
             var localeName = headerRow.getCell(i).getStringCellValue();
-            //TODO check if name is valid
-            localeItems.add(new LocaleItem(localeName, new ArrayList<>()));
+            var locale = localeManager.extractLocale(localeName);
+            localeItems.add(new LocaleGroup(locale, new ArrayList<>()));
         }
 
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {

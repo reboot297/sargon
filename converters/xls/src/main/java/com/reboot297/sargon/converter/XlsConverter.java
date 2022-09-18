@@ -16,7 +16,7 @@
 
 package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.model.LocaleItem;
+import com.reboot297.sargon.model.LocaleGroup;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import javax.annotation.Nonnull;
@@ -26,21 +26,23 @@ import java.util.List;
 /**
  * Converter for xls.
  */
-final class XlsConverter extends BaseConverterImpl<Workbook, List<LocaleItem>> {
+final class XlsConverter extends BaseConverterImpl<Workbook, List<LocaleGroup>> {
     /**
      * Constructor.
      *
-     * @param formatter default formatter
-     * @param parser    default parser
-     * @param reader    file reader
-     * @param writer    file writer
+     * @param formatter     default formatter
+     * @param parser        default parser
+     * @param reader        file reader
+     * @param writer        file writer
+     * @param localeManager locale manager
      */
     @Inject
     XlsConverter(@Nonnull XLSFormatter formatter,
                  @Nonnull XLSParser parser,
                  @Nonnull XLSFileReader reader,
-                 @Nonnull XLSFileWriter writer) {
-        super(formatter, parser, reader, writer);
+                 @Nonnull XLSFileWriter writer,
+                 @Nonnull XlsLocaleManager localeManager) {
+        super(formatter, parser, reader, writer, localeManager);
     }
 
     @Nonnull

@@ -16,10 +16,8 @@
 
 package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.ItemType;
 import com.reboot297.sargon.model.StringItem;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
@@ -33,11 +31,11 @@ public class AndroidParserTest {
                 "</resources>\n";
 
         var parser = new AndroidParser();
-        List<BaseItem> items = parser.parse(source).getItems();
+        var items = parser.parse(source);
 
         assertEquals(1, items.size());
         assertEquals(ItemType.STRING, items.get(0).getType());
-        assertEquals("simple_string", ((StringItem)items.get(0)).getId());
-        assertEquals("Simple StRing", ((StringItem)items.get(0)).getValue());
+        assertEquals("simple_string", ((StringItem) items.get(0)).getId());
+        assertEquals("Simple StRing", ((StringItem) items.get(0)).getValue());
     }
 }
