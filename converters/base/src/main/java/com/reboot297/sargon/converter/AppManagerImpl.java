@@ -65,6 +65,12 @@ final class AppManagerImpl implements AppManager {
         converters.put(converter.getCommand(), converter);
     }
 
+    @Override
+    public void generateProperties() {
+        //TODO generate properties for the app
+        //TODO generate properties for convertors
+    }
+
     @Inject
     AppManagerImpl(XlsConverter xlsConverter, AndroidConverter androidConverter) {
         addConverter(androidConverter);
@@ -110,7 +116,7 @@ final class AppManagerImpl implements AppManager {
         } else {
             BaseTextConverterImpl converter1 = (BaseTextConverterImpl) converter;
             List<LocalePath> pathToFiles = converter1.getLocaleManager().findFiles(sourcePath);
-            for (var path: pathToFiles) {
+            for (var path : pathToFiles) {
                 var source = converter.getFileReader().readFile(path.getLocalePath());
                 var item = converter.getParser().parse(source);
                 localeItems.add(new LocaleGroup(path.getLocale(), (List<BaseItem>) item));
