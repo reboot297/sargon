@@ -16,16 +16,16 @@
 
 package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.LocaleGroup;
 import java.util.List;
 import javax.annotation.Nonnull;
 
 /**
- * Base implementation for text convertors.
+ * Base implementation of converter for the tables.
  *
- * @param <R> type of remote data
+ * @param <R> - type of remote data
  */
-abstract class BaseTextConverterImpl<R> extends BaseConverterImpl<R, List<BaseItem>> {
+abstract class BaseTableConverterImpl<R> extends BaseConverterImpl<R, List<LocaleGroup>> {
     /**
      * Constructor.
      *
@@ -33,43 +33,32 @@ abstract class BaseTextConverterImpl<R> extends BaseConverterImpl<R, List<BaseIt
      * @param parser            default parser
      * @param reader            file reader
      * @param writer            file writer
-     * @param localeManager     locale manager
+     * @param localeManager     localeManager
      * @param propertiesManager properties manager
      */
-    BaseTextConverterImpl(@Nonnull BaseFormatter<List<BaseItem>, R> formatter,
-                          @Nonnull BaseParser<R, List<BaseItem>> parser,
-                          @Nonnull BaseFileReader<R> reader,
-                          @Nonnull BaseFileWriter<R> writer,
-                          @Nonnull TextLocaleManager localeManager,
-                          @Nonnull PropertiesManager propertiesManager) {
+    BaseTableConverterImpl(@Nonnull BaseFormatter<List<LocaleGroup>, R> formatter,
+                           @Nonnull BaseParser<R, List<LocaleGroup>> parser,
+                           @Nonnull BaseFileReader<R> reader,
+                           @Nonnull BaseFileWriter<R> writer,
+                           @Nonnull BaseLocaleManager localeManager,
+                           @Nonnull PropertiesManager propertiesManager) {
         super(formatter, parser, reader, writer, localeManager, propertiesManager);
     }
 
     @Override
     public boolean isTable() {
-        return false;
-    }
-
-    /**
-     * Get Locale manager for text converters.
-     *
-     * @return locale manager
-     */
-    @Nonnull
-    @Override
-    public TextLocaleManager getLocaleManager() {
-        return (TextLocaleManager) super.getLocaleManager();
+        return true;
     }
 
     @Override
-    public List<BaseItem> readItems(@Nonnull String sourcePath) {
+    public List<LocaleGroup> readItems(@Nonnull String sourcePath) {
         var source = getFileReader().readFile(sourcePath);
         return getParser().parse(source);
     }
 
     @Override
-    public boolean writeItems(@Nonnull String destinationPath, List<BaseItem> items) {
-        var result = getFormatter().format(items);
-        return getFileWriter().writeFile(result, destinationPath);
+    public boolean writeItems(@Nonnull String destinationPath, List<LocaleGroup> items) {
+        var table = getFormatter().format(items);
+        return getFileWriter().writeFile(table, destinationPath);
     }
 }

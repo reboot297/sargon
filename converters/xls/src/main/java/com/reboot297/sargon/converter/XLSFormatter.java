@@ -22,6 +22,7 @@ import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.ItemType;
 import com.reboot297.sargon.model.LocaleGroup;
 import com.reboot297.sargon.model.StringItem;
+import javax.inject.Singleton;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 /**
  * Formatter for XLS files.
  */
+@Singleton
 final class XLSFormatter implements BaseFormatter<List<LocaleGroup>, Workbook> {
 
 

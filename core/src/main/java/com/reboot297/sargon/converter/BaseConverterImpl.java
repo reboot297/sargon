@@ -51,24 +51,33 @@ abstract class BaseConverterImpl<R, L> implements BaseConverter<R, L> {
     private final BaseLocaleManager localeManager;
 
     /**
+     * Manager for Properties.
+     */
+
+    private final PropertiesManager propertiesManager;
+
+    /**
      * Constructor.
      *
-     * @param formatter     default formatter
-     * @param parser        default parser
-     * @param reader        file reader
-     * @param writer        file writer
-     * @param localeManager localeManager
+     * @param formatter         default formatter
+     * @param parser            default parser
+     * @param reader            file reader
+     * @param writer            file writer
+     * @param localeManager     localeManager
+     * @param propertiesManager properties manager
      */
     BaseConverterImpl(@Nonnull BaseFormatter<L, R> formatter,
                       @Nonnull BaseParser<R, L> parser,
                       @Nonnull BaseFileReader<R> reader,
                       @Nonnull BaseFileWriter<R> writer,
-                      @Nonnull BaseLocaleManager localeManager) {
+                      @Nonnull BaseLocaleManager localeManager,
+                      @Nonnull PropertiesManager propertiesManager) {
         this.formatter = formatter;
         this.parser = parser;
         this.fileReader = reader;
         this.fileWriter = writer;
         this.localeManager = localeManager;
+        this.propertiesManager = propertiesManager;
     }
 
     @Nonnull
@@ -99,5 +108,17 @@ abstract class BaseConverterImpl<R, L> implements BaseConverter<R, L> {
     @Override
     public BaseLocaleManager getLocaleManager() {
         return localeManager;
+    }
+
+    @Nonnull
+    @Override
+    public PropertiesManager getPropertiesManager() {
+        return propertiesManager;
+    }
+
+    @Nonnull
+    @Override
+    public String getCommand() {
+        return getPropertiesManager().getCommand();
     }
 }
