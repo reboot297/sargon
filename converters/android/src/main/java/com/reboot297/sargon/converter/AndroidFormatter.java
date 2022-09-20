@@ -19,10 +19,9 @@ package com.reboot297.sargon.converter;
 import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.ItemType;
 import com.reboot297.sargon.model.StringItem;
-
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.List;
 
 /**
  * Implementation of formatter for android.
@@ -50,7 +49,9 @@ final class AndroidFormatter implements BaseFormatter<List<BaseItem>, String> {
         builder.append(Constants.XML_HEADER).append(Constants.END_LINE)
                 .append(Constants.XML_TAG_RESOURCES_START).append(Constants.END_LINE);
         for (var item : items) {
-            if (item.getType() == ItemType.STRING) {
+            if (item.getType() == ItemType.EMPTY) {
+                builder.append(Constants.END_LINE);
+            } else if (item.getType() == ItemType.STRING) {
                 writeStringItem(builder, (StringItem) item);
             }
         }

@@ -17,6 +17,7 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.EmptyItem;
 import com.reboot297.sargon.model.StringItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
@@ -29,12 +30,17 @@ public class AndroidFormatterTest {
     public void testStringCreating() {
         final String output = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<resources>\n" +
+                // two empty lines
+                "\n\n" +
+                // one simple string
                 "<string name=\"simple_string\">Simple String</string>\n" +
                 "</resources>\n";
 
         AndroidFormatter formatter = new AndroidFormatter();
 
         var items = new LinkedList<BaseItem>();
+        items.add(new EmptyItem());
+        items.add(new EmptyItem());
         items.add(new StringItem("simple_string", "Simple String"));
         var result = formatter.format(items);
         assertEquals(output, result);
