@@ -22,21 +22,22 @@ import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.ItemType;
 import com.reboot297.sargon.model.LocaleGroup;
 import com.reboot297.sargon.model.StringItem;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Formatter for XLS files.
@@ -46,9 +47,13 @@ final class XLSFormatter implements BaseFormatter<List<LocaleGroup>, Workbook> {
 
 
     /**
-     * Default column width.
+     * The width for index column.
      */
-    private static final int COLUMN_WIDTH = 6000;
+    private static final int COLUMN_WIDTH_ID = 6000;
+    /**
+     * The width for value columns.
+     */
+    private static final int COLUMN_WIDTH_VALUE = 10000;
 
     /**
      * Name for column with id item.
@@ -92,9 +97,11 @@ final class XLSFormatter implements BaseFormatter<List<LocaleGroup>, Workbook> {
 
         XSSFFont font = workBook.createFont();
         font.setFontName("Arial");
+        font.setColor(IndexedColors.WHITE.getIndex());
         font.setFontHeightInPoints(HEADER_FONT_HEIGHT);
-        font.setBold(true);
         headerStyle.setFont(font);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+        headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
         cellStyle = workBook.createCellStyle();
         cellStyle.setWrapText(true);
@@ -113,8 +120,7 @@ final class XLSFormatter implements BaseFormatter<List<LocaleGroup>, Workbook> {
 
         var workbook = createTable();
         var sheet = workbook.createSheet(XLSUtils.DEFAULT_SHEET_NAME);
-        sheet.setColumnWidth(INDEX_COLUMN_ID, COLUMN_WIDTH);
-        sheet.setColumnWidth(XLSUtils.INDEX_COLUMN_DEFAULT_VALUE, COLUMN_WIDTH);
+        sheet.setColumnWidth(INDEX_COLUMN_ID, COLUMN_WIDTH_ID);
 
         addHeaderRow(sheet, localeItems);
         var defaultItems = localeItems.get(0).getItems();
@@ -153,6 +159,7 @@ final class XLSFormatter implements BaseFormatter<List<LocaleGroup>, Workbook> {
         addHeaderCell(headerRow, INDEX_COLUMN_ID, COLUMN_NAME_ID);
 
         for (int i = 0; i < localeItems.size(); i++) {
+            sheet.setColumnWidth(i + 1, COLUMN_WIDTH_VALUE);
             var name = localeManager.nameFromLocale(localeItems.get(i).getLocale());
             addHeaderCell(headerRow, i + 1, name);
         }
