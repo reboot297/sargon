@@ -16,6 +16,7 @@
 
 package com.reboot297.sargon.converter;
 
+import javax.inject.Singleton;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import javax.annotation.Nonnull;
@@ -28,6 +29,7 @@ import java.nio.file.Path;
 /**
  * Writer for XLS files.
  */
+@Singleton
 final class XLSFileWriter implements BaseFileWriter<Workbook> {
     @Inject
     XLSFileWriter() {

@@ -83,4 +83,29 @@ public interface BaseConverter<R, L> {
     @Nonnull
     BaseLocaleManager getLocaleManager();
 
+    /**
+     * Get Properties Manager.
+     *
+     * @return manager
+     */
+    @Nonnull
+    PropertiesManager getPropertiesManager();
+
+    /**
+     * Read file and parse data into list.
+     *
+     * @param sourcePath path to the file
+     * @return list of items
+     */
+    L readItems(@Nonnull String sourcePath);
+
+    /**
+     * Write list of the data to the file.
+     *
+     * @param destinationPath path to the file
+     * @param items           list of items
+     * @return true if success
+     */
+    boolean writeItems(@Nonnull String destinationPath, L items);
+
 }

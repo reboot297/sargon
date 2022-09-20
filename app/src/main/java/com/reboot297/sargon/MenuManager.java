@@ -71,7 +71,8 @@ public class MenuManager {
                 }
             }
         }
-
+        commands.add(new DefaultCommand("g", "generate-properties",
+                "Generate default properties file", this::generateProperties));
         commands.add(new DefaultCommand("v", "version", "Display app version", this::printVersion));
         commands.add(new DefaultCommand("h", "help", "Display help", this::printHelp));
         return commands;
@@ -100,6 +101,15 @@ public class MenuManager {
                 .longOpt(command.getLongName())
                 .desc(command.getDescription())
                 .build());
+    }
+
+    /**
+     * Generate properties file.
+     */
+    private void generateProperties() {
+        System.out.println("Generation properties");
+        appManager.generateProperties();
+        System.out.println("Generating properties completed");
     }
 
     /**

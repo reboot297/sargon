@@ -21,18 +21,35 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Converter for Android resources.
+ * PropertiesManager for xls module.
  */
 @Singleton
-final class AndroidConverter extends BaseTextConverterImpl<String> {
+final class XlsPropertiesManager extends PropertiesManager {
+
     @Inject
-    AndroidConverter(
-            @Nonnull AndroidFormatter formatter,
-            @Nonnull AndroidParser parser,
-            @Nonnull AndroidFileReader reader,
-            @Nonnull AndroidFileWriter writer,
-            @Nonnull AndroidLocaleManager localeManager,
-            @Nonnull AndroidPropertiesManager propertiesManager) {
-        super(formatter, parser, reader, writer, localeManager, propertiesManager);
+    XlsPropertiesManager() {
+        addProperty("input-file",
+                "./sample_data/Sample_XLSX.xlsx",
+                "Path to xls file from which strings will be generated");
+
+        addProperty("output-file",
+                "./target/xls/output_XLSX.xlsx",
+                "Path to xls file into which strings will be generated");
+    }
+
+    @Nonnull
+    @Override
+    public String getCommand() {
+        return "xls";
+    }
+
+    @Override
+    String getInputKey() {
+        return "xls.input-file";
+    }
+
+    @Override
+    String getOutputKey() {
+        return "xls.output-file";
     }
 }

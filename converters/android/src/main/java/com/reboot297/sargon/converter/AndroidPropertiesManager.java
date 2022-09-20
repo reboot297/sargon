@@ -21,18 +21,35 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Converter for Android resources.
+ * PropertiesManager for android module.
  */
 @Singleton
-final class AndroidConverter extends BaseTextConverterImpl<String> {
+final class AndroidPropertiesManager extends PropertiesManager {
+
     @Inject
-    AndroidConverter(
-            @Nonnull AndroidFormatter formatter,
-            @Nonnull AndroidParser parser,
-            @Nonnull AndroidFileReader reader,
-            @Nonnull AndroidFileWriter writer,
-            @Nonnull AndroidLocaleManager localeManager,
-            @Nonnull AndroidPropertiesManager propertiesManager) {
-        super(formatter, parser, reader, writer, localeManager, propertiesManager);
+    AndroidPropertiesManager() {
+        addProperty("input-res-folder",
+                "./sample_data/android/res",
+                "Path to android resource folder from which strings will be generated");
+
+        addProperty("output-res-folder",
+                "./target/android/res",
+                "Path to android resource folder into which strings will be generated");
+    }
+
+    @Nonnull
+    @Override
+    public String getCommand() {
+        return "android";
+    }
+
+    @Override
+    String getInputKey() {
+        return "android.input-res-folder";
+    }
+
+    @Override
+    String getOutputKey() {
+        return "android.output-res-folder";
     }
 }

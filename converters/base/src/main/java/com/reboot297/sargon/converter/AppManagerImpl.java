@@ -19,18 +19,23 @@ package com.reboot297.sargon.converter;
 import com.reboot297.sargon.manager.AppManager;
 import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.LocaleGroup;
-import com.reboot297.sargon.model.LocalePath;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import com.reboot297.sargon.model.PropertyItem;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfigurationLayout;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
 /**
  * Implementation of the {@link AppManager}.
@@ -41,14 +46,6 @@ final class AppManagerImpl implements AppManager {
      * default path to property file.
      */
     private static final String DEFAULT_PROPERTIES_PATH = "./sargon.properties";
-    /**
-     * Suffix for input path property.
-     */
-    private static final String PROPERTIES_SUFFIX_INPUT = "-input";
-    /**
-     * Suffix for output path property.
-     */
-    private static final String PROPERTIES_SUFFIX_OUTPUT = "-output";
 
     /**
      * Application settings.
@@ -65,6 +62,46 @@ final class AppManagerImpl implements AppManager {
         converters.put(converter.getCommand(), converter);
     }
 
+    @Override
+    public void generateProperties() {
+        List<Set<PropertyItem>> properties = new ArrayList<>();
+        properties.add(getAppProperties());
+        for (var converter : converters.values()) {
+            properties.add(converter.getPropertiesManager().getAvailableProperties());
+        }
+        updateProperties(DEFAULT_PROPERTIES_PATH, properties);
+    }
+
+    private Set<PropertyItem> getAppProperties() {
+        var properties = new HashSet<PropertyItem>();
+        properties.add(new PropertyItem("app.sample-property", "Sample value", "Sample comment"));
+        return properties;
+    }
+
+    private static void updateProperties(String filePath, List<Set<PropertyItem>> props) {
+        // File file = new File(filePath);
+        PropertiesConfiguration config = new PropertiesConfiguration();
+        PropertiesConfigurationLayout layout = new PropertiesConfigurationLayout();
+        try {
+            //layout.load(config, new InputStreamReader(new FileInputStream(file)));
+            for (var set : props) {
+                for (var p : set) {
+                    var key = p.getKey();
+                    var value = p.getValue();
+                    var comment = p.getComment();
+                    config.setProperty(key, value);
+                    layout.setComment(key, comment);
+                    layout.setBlankLinesBefore(key, 1);
+                }
+            }
+            layout.save(config, new FileWriter(filePath, false));
+        } catch (ConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     @Inject
     AppManagerImpl(XlsConverter xlsConverter, AndroidConverter androidConverter) {
         addConverter(androidConverter);
@@ -74,8 +111,12 @@ final class AppManagerImpl implements AppManager {
     @Override
     public boolean convert(String from, String to) { //TODO run in background thread
         loadProperties();
-        var inputFilePath = appProps.getProperty(from + PROPERTIES_SUFFIX_INPUT);
-        var outputFilePath = appProps.getProperty(to + PROPERTIES_SUFFIX_OUTPUT);
+
+        var inputKey = converters.get(from).getPropertiesManager().getInputKey();
+        var outputKey = converters.get(to).getPropertiesManager().getOutputKey();
+
+        var inputFilePath = appProps.getProperty(inputKey);
+        var outputFilePath = appProps.getProperty(outputKey);
         return convert(from, to, inputFilePath, outputFilePath);
     }
 
@@ -104,16 +145,13 @@ final class AppManagerImpl implements AppManager {
                                               @Nonnull BaseConverter converter) {
         var localeItems = new ArrayList<LocaleGroup>();
         if (converter.isTable()) {
-            var source = converter.getFileReader().readFile(sourcePath);
-            var item = converter.getParser().parse(source);
-            return (List<LocaleGroup>) item;
+            return (List<LocaleGroup>) converter.readItems(sourcePath);
         } else {
-            BaseTextConverterImpl converter1 = (BaseTextConverterImpl) converter;
-            List<LocalePath> pathToFiles = converter1.getLocaleManager().findFiles(sourcePath);
-            for (var path: pathToFiles) {
-                var source = converter.getFileReader().readFile(path.getLocalePath());
-                var item = converter.getParser().parse(source);
-                localeItems.add(new LocaleGroup(path.getLocale(), (List<BaseItem>) item));
+            BaseTextConverterImpl textConverter = (BaseTextConverterImpl) converter;
+            var pathToFiles = textConverter.getLocaleManager().findFiles(sourcePath);
+            for (var path : pathToFiles) {
+                localeItems.add(new LocaleGroup(path.getLocale(),
+                        (List<BaseItem>) converter.readItems(path.getLocalePath())));
             }
         }
         return localeItems;
@@ -123,21 +161,19 @@ final class AppManagerImpl implements AppManager {
                                      @Nonnull BaseConverter converter,
                                      @Nonnull List<LocaleGroup> items) {
         if (converter.isTable()) {
-            var result = converter.getFormatter().format(items);
-            return converter.getFileWriter().writeFile(result, destinationPath);
+            return converter.writeItems(destinationPath, items);
         } else {
-            return writeToLocalFiles((BaseTextConverterImpl) converter, destinationPath, items);
+            return writeToTextLocalFiles((BaseTextConverterImpl) converter, destinationPath, items);
         }
     }
 
-    private boolean writeToLocalFiles(@Nonnull BaseTextConverterImpl converter,
+    private boolean writeToTextLocalFiles(@Nonnull BaseTextConverterImpl converter,
                                       @Nonnull String destinationPath,
                                       @Nonnull List<LocaleGroup> items) {
         boolean success = false;
         for (var item : items) {
-            var result = converter.getFormatter().format(item.getItems());
             var path = converter.getLocaleManager().pathToLocaleFile(destinationPath, item.getLocale());
-            success |= converter.getFileWriter().writeFile(result, path);
+            success |= converter.writeItems(path, item.getItems());
         }
         return success;
     }
