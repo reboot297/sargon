@@ -18,12 +18,10 @@ package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.StringItem;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AndroidFormatterTest {
 
@@ -36,9 +34,9 @@ public class AndroidFormatterTest {
 
         AndroidFormatter formatter = new AndroidFormatter();
 
-        List<BaseItem> items = new LinkedList<>();
+        var items = new LinkedList<BaseItem>();
         items.add(new StringItem("simple_string", "Simple String"));
-        String result = formatter.format(items);
+        var result = formatter.format(items);
         assertEquals(output, result);
     }
 }

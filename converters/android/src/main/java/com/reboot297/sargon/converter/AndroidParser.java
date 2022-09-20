@@ -22,21 +22,34 @@ import com.reboot297.sargon.model.StringItem;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
-final class AndroidParser implements BaseParser<String> {
+/**
+ * Parser for android strings.
+ */
+final class AndroidParser implements BaseParser<String, List<BaseItem>> {
 
+    /**
+     * Default constructor.
+     */
     @Inject
     AndroidParser() {
 
     }
 
+    /**
+     * Parse android source data into the list of items.
+     *
+     * @param source like xml, json, xls
+     * @return list of data.
+     */
     @Nullable
     @Override
     public List<BaseItem> parse(@Nonnull String source) {
-        var result = new LinkedList<BaseItem>();
+        var result = new ArrayList<BaseItem>();
 
         int position = 0;
         int nextPosition;

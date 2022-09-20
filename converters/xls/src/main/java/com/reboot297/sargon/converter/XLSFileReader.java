@@ -16,6 +16,7 @@
 
 package com.reboot297.sargon.converter;
 
+import javax.inject.Singleton;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -27,6 +28,7 @@ import java.io.IOException;
 /**
  * Reader for the XLS files.
  */
+@Singleton
 final class XLSFileReader implements BaseFileReader<Workbook> {
 
     @Inject

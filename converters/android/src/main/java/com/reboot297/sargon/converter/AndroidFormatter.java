@@ -27,13 +27,22 @@ import java.util.List;
 /**
  * Implementation of formatter for android.
  */
-final class AndroidFormatter implements BaseFormatter<String> {
+final class AndroidFormatter implements BaseFormatter<List<BaseItem>, String> {
 
+    /**
+     * Default constructor.
+     */
     @Inject
     AndroidFormatter() {
 
     }
 
+    /**
+     * Convert list of items into xml data.
+     *
+     * @param items source data
+     * @return formatted data
+     */
     @Override
     @Nonnull
     public String format(@Nonnull List<BaseItem> items) {

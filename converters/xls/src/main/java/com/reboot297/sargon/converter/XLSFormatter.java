@@ -17,57 +17,67 @@
 package com.reboot297.sargon.converter;
 
 import static com.reboot297.sargon.converter.XLSUtils.HEADER_FONT_HEIGHT;
+import static com.reboot297.sargon.converter.XLSUtils.INDEX_COLUMN_ID;
 import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.ItemType;
+import com.reboot297.sargon.model.LocaleGroup;
 import com.reboot297.sargon.model.StringItem;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.util.List;
-
 /**
  * Formatter for XLS files.
  */
-final class XLSFormatter implements BaseFormatter<Workbook> {
+@Singleton
+final class XLSFormatter implements BaseFormatter<List<LocaleGroup>, Workbook> {
 
 
     /**
-     * Default column width.
+     * The width for index column.
      */
-    private static final int COLUMN_WIDTH = 6000;
+    private static final int COLUMN_WIDTH_ID = 6000;
+    /**
+     * The width for value columns.
+     */
+    private static final int COLUMN_WIDTH_VALUE = 10000;
 
     /**
      * Name for column with id item.
      */
     private static final String COLUMN_NAME_ID = "ID";
-    /**
-     * Name for column with default value.
-     */
-    private static final String COLUMN_NAME_DEFAULT_VALUE = "Default value";
 
     /**
      * Style for header cell.
      */
-    @Nonnull
     private CellStyle headerStyle;
 
     /**
      * Style for cells.
      */
-    @Nonnull
     private CellStyle cellStyle;
 
+    /**
+     * LocaleManager instance.
+     */
+    private final BaseLocaleManager localeManager;
 
     @Inject
-    XLSFormatter() {
-
+    XLSFormatter(@Nonnull XlsLocaleManager localeManager) {
+        this.localeManager = localeManager;
     }
 
 
@@ -87,35 +97,72 @@ final class XLSFormatter implements BaseFormatter<Workbook> {
 
         XSSFFont font = workBook.createFont();
         font.setFontName("Arial");
+        font.setColor(IndexedColors.WHITE.getIndex());
         font.setFontHeightInPoints(HEADER_FONT_HEIGHT);
-        font.setBold(true);
         headerStyle.setFont(font);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+        headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
         cellStyle = workBook.createCellStyle();
         cellStyle.setWrapText(true);
         return workBook;
     }
 
+    /**
+     * Convert list of localized strings into the table.
+     *
+     * @param localeItems source data
+     * @return workbook
+     */
     @Nonnull
     @Override
-    public Workbook format(List<BaseItem> items) {
+    public Workbook format(@Nonnull List<LocaleGroup> localeItems) {
 
-        Workbook workbook = createTable();
-
+        var workbook = createTable();
         var sheet = workbook.createSheet(XLSUtils.DEFAULT_SHEET_NAME);
-        sheet.setColumnWidth(XLSUtils.INDEX_COLUMN_ID, COLUMN_WIDTH);
-        sheet.setColumnWidth(XLSUtils.INDEX_COLUMN_VALUE, COLUMN_WIDTH);
+        sheet.setColumnWidth(INDEX_COLUMN_ID, COLUMN_WIDTH_ID);
 
-        Row headerRow = sheet.createRow(XLSUtils.INDEX_ROW_HEADER);
-        addHeaderCell(headerRow, XLSUtils.INDEX_COLUMN_ID, COLUMN_NAME_ID);
-        addHeaderCell(headerRow, XLSUtils.INDEX_COLUMN_VALUE, COLUMN_NAME_DEFAULT_VALUE);
-
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getType() != ItemType.EMPTY) {
-                addRow(items.get(i), sheet.createRow(i + 1));
+        addHeaderRow(sheet, localeItems);
+        var defaultItems = localeItems.get(0).getItems();
+        for (int i = 0; i < defaultItems.size(); i++) {
+            if (defaultItems.get(i).getType() != ItemType.EMPTY) {
+                addRow(getRowValues(i, localeItems), sheet.createRow(i + 1));
             }
         }
+
         return workbook;
+    }
+
+    /**
+     * Get values for the row.
+     *
+     * @param rowPosition position in table
+     * @param localeItems locales
+     * @return list of base items
+     */
+    @Nonnull
+    private static List<BaseItem> getRowValues(int rowPosition, @Nonnull List<LocaleGroup> localeItems) {
+        return localeItems.stream()
+                .map(LocaleGroup::getItems)
+                .map(list -> list.get(rowPosition))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Add header row.
+     *
+     * @param sheet       sheet
+     * @param localeItems list of locale items
+     */
+    private void addHeaderRow(@Nonnull Sheet sheet, @Nonnull List<LocaleGroup> localeItems) {
+        var headerRow = sheet.createRow(XLSUtils.INDEX_ROW_HEADER);
+        addHeaderCell(headerRow, INDEX_COLUMN_ID, COLUMN_NAME_ID);
+
+        for (int i = 0; i < localeItems.size(); i++) {
+            sheet.setColumnWidth(i + 1, COLUMN_WIDTH_VALUE);
+            var name = localeManager.nameFromLocale(localeItems.get(i).getLocale());
+            addHeaderCell(headerRow, i + 1, name);
+        }
     }
 
     /**
@@ -132,19 +179,22 @@ final class XLSFormatter implements BaseFormatter<Workbook> {
     }
 
     /**
-     * Add cells with id and default value.
+     * Add cells with id and values.
      *
-     * @param item item
-     * @param row  row
+     * @param items items
+     * @param row   row
      */
-    private void addRow(BaseItem item, Row row) {
-        if (item.getType() == ItemType.STRING) {
-            var cell = row.createCell(XLSUtils.INDEX_COLUMN_ID);
-            cell.setCellValue(((StringItem) item).getId());
+    private void addRow(List<BaseItem> items, Row row) {
+        Cell cell;
+        if (items.get(INDEX_COLUMN_ID).getType() == ItemType.STRING) {
+            cell = row.createCell(INDEX_COLUMN_ID);
+            cell.setCellValue(((StringItem) items.get(INDEX_COLUMN_ID)).getId());
             cell.setCellStyle(cellStyle);
+        }
 
-            cell = row.createCell(XLSUtils.INDEX_COLUMN_VALUE);
-            cell.setCellValue(((StringItem) item).getValue());
+        for (int i = 0; i < items.size(); i++) {
+            cell = row.createCell(i + 1);
+            cell.setCellValue(((StringItem) items.get(i)).getValue());
             cell.setCellStyle(cellStyle);
         }
     }

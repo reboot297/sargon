@@ -16,34 +16,33 @@
 
 package com.reboot297.sargon.converter;
 
-import org.apache.poi.ss.usermodel.Workbook;
-
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Converter for xls.
  */
-final class XlsConverter extends BaseConverterImpl<Workbook> {
+@Singleton
+final class XlsConverter extends BaseTableConverterImpl<Workbook> {
     /**
      * Constructor.
      *
-     * @param formatter default formatter
-     * @param parser    default parser
-     * @param reader    file reader
-     * @param writer    file writer
+     * @param formatter         default formatter
+     * @param parser            default parser
+     * @param reader            file reader
+     * @param writer            file writer
+     * @param localeManager     locale manager
+     * @param propertiesManager xls properties manager
      */
     @Inject
     XlsConverter(@Nonnull XLSFormatter formatter,
                  @Nonnull XLSParser parser,
                  @Nonnull XLSFileReader reader,
-                 @Nonnull XLSFileWriter writer) {
-        super(formatter, parser, reader, writer);
-    }
-
-    @Nonnull
-    @Override
-    public String getCommand() {
-        return "xls";
+                 @Nonnull XLSFileWriter writer,
+                 @Nonnull XlsLocaleManager localeManager,
+                 @Nonnull XlsPropertiesManager propertiesManager) {
+        super(formatter, parser, reader, writer, localeManager, propertiesManager);
     }
 }

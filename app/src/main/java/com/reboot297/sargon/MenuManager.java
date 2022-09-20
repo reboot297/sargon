@@ -71,7 +71,8 @@ public class MenuManager {
                 }
             }
         }
-
+        commands.add(new DefaultCommand("g", "generate-properties",
+                "Generate default properties file", this::generateProperties));
         commands.add(new DefaultCommand("v", "version", "Display app version", this::printVersion));
         commands.add(new DefaultCommand("h", "help", "Display help", this::printHelp));
         return commands;
@@ -103,12 +104,22 @@ public class MenuManager {
     }
 
     /**
+     * Generate properties file.
+     */
+    private void generateProperties() {
+        System.out.println("Generation properties");
+        appManager.generateProperties();
+        System.out.println("Generating properties completed");
+    }
+
+    /**
      * Print app version.
      */
     public void printVersion() {
         System.out.println("Sargon");
         System.out.println(getClass().getPackage().getImplementationVersion());
         System.out.println("The tool to convert string data between different formats.");
+        System.out.println("Supported formats: " + appManager.getAvailableIds());
         System.out.println("Author: Viktor Pop");
         System.out.println("Source code: https://github.com/reboot297/sargon");
         System.out.println("License Apache 2.0 https://github.com/reboot297/sargon/blob/main/LICENSE");

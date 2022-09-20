@@ -17,21 +17,28 @@
 package com.reboot297.sargon.converter;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Locale;
 
 /**
- * Base Parser for all types of data.
- *
- * @param <S> type of source data.
- * @param <R> type of result data
+ * Base interface to work with locales.
  */
-interface BaseParser<S, R> {
+interface BaseLocaleManager {
+
     /**
-     * Parsing data.
+     * Extract locale object from name of the file or column name of table.
      *
-     * @param source like xml, json, xls
-     * @return parsed data
+     * @param text name
+     * @return Locale object
      */
-    @Nullable
-    R parse(@Nonnull S source);
+    @Nonnull
+    Locale extractLocale(@Nonnull String text);
+
+    /**
+     * Generate name from locale object.
+     *
+     * @param locale locale
+     * @return name.
+     */
+    @Nonnull
+    String nameFromLocale(@Nonnull Locale locale);
 }

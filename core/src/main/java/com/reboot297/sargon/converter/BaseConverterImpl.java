@@ -21,68 +21,104 @@ import javax.annotation.Nonnull;
 /**
  * Base implementation for all convertors.
  *
- * @param <T> type of data.
+ * @param <R> type of remote data - string, table...
+ * @param <L> type of local data - list of items or one item
  */
-abstract class BaseConverterImpl<T> implements BaseConverter<T> {
+abstract class BaseConverterImpl<R, L> implements BaseConverter<R, L> {
     /**
      * Formatter instance.
      */
-    private final BaseFormatter<T> formatter;
+    private final BaseFormatter<L, R> formatter;
 
     /**
      * Parser instance.
      */
-    private final BaseParser<T> parser;
+    private final BaseParser<R, L> parser;
 
     /**
      * File reader instance.
      */
-    private final BaseFileReader<T> fileReader;
+    private final BaseFileReader<R> fileReader;
 
     /**
      * File writer instance.
      */
-    private final BaseFileWriter<T> fileWriter;
+    private final BaseFileWriter<R> fileWriter;
+
+    /**
+     * Manager for locales.
+     */
+    private final BaseLocaleManager localeManager;
+
+    /**
+     * Manager for Properties.
+     */
+
+    private final PropertiesManager propertiesManager;
 
     /**
      * Constructor.
      *
-     * @param formatter default formatter
-     * @param parser default parser
-     * @param reader file reader
-     * @param writer file writer
+     * @param formatter         default formatter
+     * @param parser            default parser
+     * @param reader            file reader
+     * @param writer            file writer
+     * @param localeManager     localeManager
+     * @param propertiesManager properties manager
      */
-    BaseConverterImpl(@Nonnull BaseFormatter<T> formatter,
-                      @Nonnull BaseParser<T> parser,
-                      @Nonnull BaseFileReader<T> reader,
-                      @Nonnull BaseFileWriter<T> writer) {
+    BaseConverterImpl(@Nonnull BaseFormatter<L, R> formatter,
+                      @Nonnull BaseParser<R, L> parser,
+                      @Nonnull BaseFileReader<R> reader,
+                      @Nonnull BaseFileWriter<R> writer,
+                      @Nonnull BaseLocaleManager localeManager,
+                      @Nonnull PropertiesManager propertiesManager) {
         this.formatter = formatter;
         this.parser = parser;
         this.fileReader = reader;
         this.fileWriter = writer;
+        this.localeManager = localeManager;
+        this.propertiesManager = propertiesManager;
     }
 
     @Nonnull
     @Override
-    public BaseFormatter<T> getFormatter() {
+    public BaseFormatter<L, R> getFormatter() {
         return formatter;
     }
 
     @Nonnull
     @Override
-    public BaseParser<T> getParser() {
+    public BaseParser<R, L> getParser() {
         return parser;
     }
 
     @Nonnull
     @Override
-    public BaseFileReader<T> getFileReader() {
+    public BaseFileReader<R> getFileReader() {
         return fileReader;
     }
 
     @Nonnull
     @Override
-    public BaseFileWriter<T> getFileWriter() {
+    public BaseFileWriter<R> getFileWriter() {
         return fileWriter;
+    }
+
+    @Nonnull
+    @Override
+    public BaseLocaleManager getLocaleManager() {
+        return localeManager;
+    }
+
+    @Nonnull
+    @Override
+    public PropertiesManager getPropertiesManager() {
+        return propertiesManager;
+    }
+
+    @Nonnull
+    @Override
+    public String getCommand() {
+        return getPropertiesManager().getCommand();
     }
 }

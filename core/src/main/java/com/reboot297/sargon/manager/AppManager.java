@@ -59,4 +59,9 @@ public interface AppManager {
      * @param converter converter
      */
     void addConverter(@Nonnull BaseConverter converter);
+
+    /**
+     * Generate properties.
+     */
+    void generateProperties();
 }

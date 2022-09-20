@@ -16,22 +16,33 @@
 
 package com.reboot297.sargon.converter;
 
+import com.reboot297.sargon.model.LocalePath;
+
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Locale;
 
 /**
- * Base Parser for all types of data.
- *
- * @param <S> type of source data.
- * @param <R> type of result data
+ * Interface help to extract locale from file path.
  */
-interface BaseParser<S, R> {
+interface TextLocaleManager extends BaseLocaleManager {
+
     /**
-     * Parsing data.
+     * Get path to local file.
      *
-     * @param source like xml, json, xls
-     * @return parsed data
+     * @param rootFolder root folder
+     * @param locale     locale
+     * @return path
      */
-    @Nullable
-    R parse(@Nonnull S source);
+    @Nonnull
+    String pathToLocaleFile(@Nonnull String rootFolder, @Nonnull Locale locale);
+
+    /**
+     * Find list of files in root directory.
+     *
+     * @param rootFolder root folder
+     * @return list of object with path to files
+     */
+    @Nonnull
+    List<LocalePath> findFiles(@Nonnull String rootFolder);
 }
