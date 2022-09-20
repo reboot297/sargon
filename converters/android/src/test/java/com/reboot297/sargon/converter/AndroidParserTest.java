@@ -27,15 +27,23 @@ public class AndroidParserTest {
     public void testParsingStrings() {
         final String source = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<resources>\n" +
+                // two empty lines
+                "\n\n" +
+                // one simple string
                 "<string name=\"simple_string\">Simple StRing</string>\n" +
+                // one blank line
+                "  \t \n" +
                 "</resources>\n";
 
         var parser = new AndroidParser();
         var items = parser.parse(source);
 
-        assertEquals(1, items.size());
-        assertEquals(ItemType.STRING, items.get(0).getType());
-        assertEquals("simple_string", ((StringItem) items.get(0)).getId());
-        assertEquals("Simple StRing", ((StringItem) items.get(0)).getValue());
+        assertEquals(4, items.size());
+        assertEquals(ItemType.EMPTY, items.get(0).getType());
+        assertEquals(ItemType.EMPTY, items.get(1).getType());
+        assertEquals(ItemType.STRING, items.get(2).getType());
+        assertEquals("simple_string", ((StringItem) items.get(2)).getId());
+        assertEquals("Simple StRing", ((StringItem) items.get(2)).getValue());
+        assertEquals(ItemType.EMPTY, items.get(3).getType());
     }
 }

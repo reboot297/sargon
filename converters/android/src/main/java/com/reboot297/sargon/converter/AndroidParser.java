@@ -17,6 +17,7 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.EmptyItem;
 import com.reboot297.sargon.model.StringItem;
 
 import javax.annotation.Nonnull;
@@ -74,6 +75,10 @@ final class AndroidParser implements BaseParser<String, List<BaseItem>> {
             nextWord = source.substring(position, nextPosition);
 
             switch (nextWord.trim()) {
+                case "":  // inside empty line block
+                    result.add(new EmptyItem());
+                    nextPosition = source.indexOf("\n", nextPosition);
+                    break;
                 case Constants.XML_TAG_ANDROID_STRING_START:
                     nextPosition = parseAndroidString(source, result, nextPosition);
                     break;
