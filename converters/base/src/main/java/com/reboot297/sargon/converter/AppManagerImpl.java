@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -53,10 +56,22 @@ final class AppManagerImpl implements AppManager {
     private Properties appProps = new Properties();
 
     /**
+     * Executor service for background work.
+     */
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    /**
      * Map of converters.
      */
     @SuppressWarnings("unused")
     private final Map<String, BaseConverter> converters = new HashMap<>();
+
+    @Inject
+    AppManagerImpl(XlsConverter xlsConverter, AndroidConverter androidConverter) {
+        addConverter(androidConverter);
+        addConverter(xlsConverter);
+    }
+
 
     public void addConverter(@Nonnull BaseConverter converter) {
         converters.put(converter.getCommand(), converter);
@@ -64,6 +79,11 @@ final class AppManagerImpl implements AppManager {
 
     @Override
     public void generateProperties() {
+        executorService.submit(this::runGenerateProperties);
+        executorService.shutdown();
+    }
+
+    public void runGenerateProperties() {
         List<Set<PropertyItem>> properties = new ArrayList<>();
         properties.add(getAppProperties());
         for (var converter : converters.values()) {
@@ -102,14 +122,20 @@ final class AppManagerImpl implements AppManager {
         }
     }
 
-    @Inject
-    AppManagerImpl(XlsConverter xlsConverter, AndroidConverter androidConverter) {
-        addConverter(androidConverter);
-        addConverter(xlsConverter);
+    @Override
+    public boolean convert(String from, String to) {
+        var future = executorService.submit(() -> runConvertCommand(from, to));
+        boolean result = false;
+        try {
+            result = future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        executorService.shutdown();
+        return result;
     }
 
-    @Override
-    public boolean convert(String from, String to) { //TODO run in background thread
+    private boolean runConvertCommand(@Nonnull String from, @Nonnull String to) {
         loadProperties();
 
         var inputKey = converters.get(from).getPropertiesManager().getInputKey();
@@ -168,8 +194,8 @@ final class AppManagerImpl implements AppManager {
     }
 
     private boolean writeToTextLocalFiles(@Nonnull BaseTextConverterImpl converter,
-                                      @Nonnull String destinationPath,
-                                      @Nonnull List<LocaleGroup> items) {
+                                          @Nonnull String destinationPath,
+                                          @Nonnull List<LocaleGroup> items) {
         boolean success = false;
         for (var item : items) {
             var path = converter.getLocaleManager().pathToLocaleFile(destinationPath, item.getLocale());
