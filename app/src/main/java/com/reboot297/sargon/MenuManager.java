@@ -119,6 +119,7 @@ public class MenuManager {
         System.out.println("Sargon");
         System.out.println(getClass().getPackage().getImplementationVersion());
         System.out.println("The tool to convert string data between different formats.");
+        System.out.println("Supported formats: " + appManager.getAvailableIds());
         System.out.println("Author: Viktor Pop");
         System.out.println("Source code: https://github.com/reboot297/sargon");
         System.out.println("License Apache 2.0 https://github.com/reboot297/sargon/blob/main/LICENSE");

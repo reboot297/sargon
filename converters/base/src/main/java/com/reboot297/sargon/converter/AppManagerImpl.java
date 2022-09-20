@@ -21,6 +21,7 @@ import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.LocaleGroup;
 import com.reboot297.sargon.model.PropertyItem;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -31,6 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -53,10 +57,22 @@ final class AppManagerImpl implements AppManager {
     private Properties appProps = new Properties();
 
     /**
+     * Executor service for background work.
+     */
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    /**
      * Map of converters.
      */
     @SuppressWarnings("unused")
     private final Map<String, BaseConverter> converters = new HashMap<>();
+
+    @Inject
+    AppManagerImpl(XlsConverter xlsConverter, AndroidConverter androidConverter) {
+        addConverter(androidConverter);
+        addConverter(xlsConverter);
+    }
+
 
     public void addConverter(@Nonnull BaseConverter converter) {
         converters.put(converter.getCommand(), converter);
@@ -64,6 +80,11 @@ final class AppManagerImpl implements AppManager {
 
     @Override
     public void generateProperties() {
+        executorService.submit(this::runGenerateProperties);
+        executorService.shutdown();
+    }
+
+    public void runGenerateProperties() {
         List<Set<PropertyItem>> properties = new ArrayList<>();
         properties.add(getAppProperties());
         for (var converter : converters.values()) {
@@ -102,15 +123,23 @@ final class AppManagerImpl implements AppManager {
         }
     }
 
-    @Inject
-    AppManagerImpl(XlsConverter xlsConverter, AndroidConverter androidConverter) {
-        addConverter(androidConverter);
-        addConverter(xlsConverter);
+    @Override
+    public boolean convert(String from, String to) {
+        var future = executorService.submit(() -> runConvertCommand(from, to));
+        boolean result = false;
+        try {
+            result = future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        executorService.shutdown();
+        return result;
     }
 
-    @Override
-    public boolean convert(String from, String to) { //TODO run in background thread
-        loadProperties();
+    private boolean runConvertCommand(@Nonnull String from, @Nonnull String to) {
+        if (!loadProperties()) {
+            return false;
+        }
 
         var inputKey = converters.get(from).getPropertiesManager().getInputKey();
         var outputKey = converters.get(to).getPropertiesManager().getOutputKey();
@@ -168,8 +197,8 @@ final class AppManagerImpl implements AppManager {
     }
 
     private boolean writeToTextLocalFiles(@Nonnull BaseTextConverterImpl converter,
-                                      @Nonnull String destinationPath,
-                                      @Nonnull List<LocaleGroup> items) {
+                                          @Nonnull String destinationPath,
+                                          @Nonnull List<LocaleGroup> items) {
         boolean success = false;
         for (var item : items) {
             var path = converter.getLocaleManager().pathToLocaleFile(destinationPath, item.getLocale());
@@ -178,14 +207,22 @@ final class AppManagerImpl implements AppManager {
         return success;
     }
 
-    private void loadProperties() {
+    private boolean loadProperties() {
         System.out.println("Load properties");
         appProps = new Properties();
         try {
             appProps.load(new FileInputStream(DEFAULT_PROPERTIES_PATH));
+            return true;
+        } catch (FileNotFoundException e) {
+            String message = String.format("[ERROR] Can't find '%s' file. \n"
+                    + "Please make sure that the one exists, if not, then "
+                    + "run app with '--generate-properties' command to generate this file,"
+                    + " with default values.", DEFAULT_PROPERTIES_PATH);
+            System.err.println(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     @Override
