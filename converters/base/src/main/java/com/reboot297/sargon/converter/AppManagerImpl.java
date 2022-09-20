@@ -21,6 +21,7 @@ import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.LocaleGroup;
 import com.reboot297.sargon.model.PropertyItem;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -136,7 +137,9 @@ final class AppManagerImpl implements AppManager {
     }
 
     private boolean runConvertCommand(@Nonnull String from, @Nonnull String to) {
-        loadProperties();
+        if (!loadProperties()) {
+            return false;
+        }
 
         var inputKey = converters.get(from).getPropertiesManager().getInputKey();
         var outputKey = converters.get(to).getPropertiesManager().getOutputKey();
@@ -204,14 +207,22 @@ final class AppManagerImpl implements AppManager {
         return success;
     }
 
-    private void loadProperties() {
+    private boolean loadProperties() {
         System.out.println("Load properties");
         appProps = new Properties();
         try {
             appProps.load(new FileInputStream(DEFAULT_PROPERTIES_PATH));
+            return true;
+        } catch (FileNotFoundException e) {
+            String message = String.format("[ERROR] Can't find '%s' file. \n"
+                    + "Please make sure that the one exists, if not, then "
+                    + "run app with '--generate-properties' command to generate this file,"
+                    + " with default values.", DEFAULT_PROPERTIES_PATH);
+            System.err.println(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     @Override
