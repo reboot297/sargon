@@ -18,10 +18,13 @@ package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.StringItem;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class AndroidFormatterTest {
 
@@ -32,11 +35,31 @@ public class AndroidFormatterTest {
                 "<string name=\"simple_string\">Simple String</string>\n" +
                 "</resources>\n";
 
+        final String outputEn = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<resources>\n" +
+                "<string name=\"simple_string\">Simple En String</string>\n" +
+                "</resources>\n";
+
+
+        final String outputEnUS = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<resources>\n" +
+                "<string name=\"simple_string\">Simple En_US String</string>\n" +
+                "</resources>\n";
+
+
         AndroidFormatter formatter = new AndroidFormatter();
 
-        var items = new LinkedList<BaseItem>();
-        items.add(new StringItem("simple_string", "Simple String"));
+
+        var items = new ArrayList<BaseItem>();
+        var values = new LinkedHashMap<String, String>();
+        values.put("", "Simple String");
+        values.put("en", "Simple En String");
+        values.put("en_US", "Simple En_US String");
+        items.add(new StringItem("simple string", values));
+
         var result = formatter.format(items);
-        assertEquals(output, result);
+        assertEquals(output, result.get(""));
+        assertEquals(outputEn, result.get("en"));
+        assertEquals(outputEnUS, result.get("en_US"));
     }
 }

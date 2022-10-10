@@ -18,8 +18,14 @@ package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.manager.AppManager;
 import com.reboot297.sargon.model.BaseItem;
-import com.reboot297.sargon.model.LocaleGroup;
 import com.reboot297.sargon.model.PropertyItem;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfigurationLayout;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -35,11 +41,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.PropertiesConfigurationLayout;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 
 /**
  * Implementation of the {@link AppManager}.
@@ -161,50 +162,13 @@ final class AppManagerImpl implements AppManager {
         var converterFrom = converters.get(from);
         var converterTo = converters.get(to);
         if (converterFrom != null && converterTo != null) {
-            var items = readLocaleItems(sourcePath, converterFrom);
-            result = writeLocaleFiles(destinationPath, converterTo, items);
+            var items = (List<BaseItem>) converterFrom.readItems(sourcePath);
+            result = converterTo.writeItems(destinationPath, items);
             System.out.println("Convert data completed. success: " + result);
         } else {
             System.err.println("Can't find converter");
         }
         return result;
-    }
-
-    private List<LocaleGroup> readLocaleItems(@Nonnull String sourcePath,
-                                              @Nonnull BaseConverter converter) {
-        var localeItems = new ArrayList<LocaleGroup>();
-        if (converter.isTable()) {
-            return (List<LocaleGroup>) converter.readItems(sourcePath);
-        } else {
-            BaseTextConverterImpl textConverter = (BaseTextConverterImpl) converter;
-            var pathToFiles = textConverter.getLocaleManager().findFiles(sourcePath);
-            for (var path : pathToFiles) {
-                localeItems.add(new LocaleGroup(path.getLocale(),
-                        (List<BaseItem>) converter.readItems(path.getLocalePath())));
-            }
-        }
-        return localeItems;
-    }
-
-    private boolean writeLocaleFiles(@Nonnull String destinationPath,
-                                     @Nonnull BaseConverter converter,
-                                     @Nonnull List<LocaleGroup> items) {
-        if (converter.isTable()) {
-            return converter.writeItems(destinationPath, items);
-        } else {
-            return writeToTextLocalFiles((BaseTextConverterImpl) converter, destinationPath, items);
-        }
-    }
-
-    private boolean writeToTextLocalFiles(@Nonnull BaseTextConverterImpl converter,
-                                          @Nonnull String destinationPath,
-                                          @Nonnull List<LocaleGroup> items) {
-        boolean success = false;
-        for (var item : items) {
-            var path = converter.getLocaleManager().pathToLocaleFile(destinationPath, item.getLocale());
-            success |= converter.writeItems(path, item.getItems());
-        }
-        return success;
     }
 
     private boolean loadProperties() {

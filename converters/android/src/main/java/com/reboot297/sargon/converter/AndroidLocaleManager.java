@@ -24,13 +24,12 @@ import javax.inject.Singleton;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Locale Manager for Android files.
  */
 @Singleton
-final class AndroidLocaleManager implements TextLocaleManager {
+final class AndroidLocaleManager extends BaseTextLocaleManagerImpl {
 
     /**
      * Folder name for default values.
@@ -54,13 +53,13 @@ final class AndroidLocaleManager implements TextLocaleManager {
      * Get path to file with strings for specific locale.
      *
      * @param rootFolder root folder
-     * @param locale     locale
+     * @param localeKey  locale key
      * @return path
      */
     @Nonnull
     @Override
-    public String pathToLocaleFile(@Nonnull String rootFolder, @Nonnull Locale locale) {
-        return rootFolder + File.separator + nameFromLocale(locale) + File.separator + FILE_NAME;
+    public String pathToLocaleFile(@Nonnull String rootFolder, @Nonnull String localeKey) {
+        return rootFolder + File.separator + nameFromLocale(localeKey) + File.separator + FILE_NAME;
     }
 
     /**
@@ -102,36 +101,52 @@ final class AndroidLocaleManager implements TextLocaleManager {
      * @return locale
      */
     @Nonnull
-    public Locale extractLocale(@Nonnull String fileName) {
-        var language = "";
-        var country = "";
+    public String extractLocale(@Nonnull String fileName) {
         if (!fileName.equals(FOLDER_NAME) && fileName.startsWith(FOLDER_NAME)) {
-            var values = fileName.replace("values-", "").replace("-r", " ").split(" ");
-            language = values[0];
-            if (values.length > 1) {
-                country = values[1];
+            var values = fileName.replace("values-", "")
+                    .replace("-r", " ")
+                    .split(" ");
+            var firstPart = values[0];
+            if (isLanguageValid(firstPart)) {
+                return extractLocale(values);
+            } else {
+                return fileName.replace("values-", "");
             }
         }
-        return new Locale(language, country);
+        return "";
+    }
+
+    @Nonnull
+    private String extractLocale(String[] values) {
+        var builder = new StringBuilder();
+        builder.append(values[0].toLowerCase());
+        if (values.length == 2 && isCountryValid(values[1])) {
+            builder.append(LOCALE_NAME_SEPARATOR)
+                    .append(values[1].toUpperCase());
+        }
+        return builder.toString();
     }
 
     /**
      * Create name for android folder depending on locale.
      *
-     * @param locale locale
+     * @param localeKey locale-key value
      * @return folder name
      */
     @Nonnull
     @Override
-    public String nameFromLocale(@Nonnull Locale locale) {
+    public String nameFromLocale(@Nonnull String localeKey) {
         var builder = new StringBuilder();
         builder.append(FOLDER_NAME);
-        if (locale.getLanguage() != null && !locale.getLanguage().isBlank()) {
-            builder.append('-');
-            builder.append(locale.getLanguage().toLowerCase());
-            if (locale.getCountry() != null && !locale.getCountry().isBlank()) {
-                builder.append("-r").append(locale.getCountry().toUpperCase());
-            }
+        var parts = localeKey.split(LOCALE_NAME_SEPARATOR);
+        if (parts.length == 1 && isLanguageValid(parts[0])) { // language only
+            builder.append("-")
+                    .append(parts[0].toLowerCase());
+        } else if (parts.length == 2 && isLanguageValid(parts[0]) && isCountryValid(parts[1])) { // language and country
+            builder.append("-")
+                    .append(parts[0].toLowerCase()).append("-r").append(parts[1].toUpperCase());
+        } else { // label
+            builder.append(localeKey);
         }
         return builder.toString();
     }

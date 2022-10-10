@@ -18,7 +18,8 @@ package com.reboot297.sargon.converter;
 
 import static com.reboot297.sargon.converter.XLSUtils.INDEX_COLUMN_DEFAULT_VALUE;
 import static com.reboot297.sargon.converter.XLSUtils.INDEX_COLUMN_ID;
-import com.reboot297.sargon.model.LocaleGroup;
+
+import com.reboot297.sargon.model.BaseItem;
 import com.reboot297.sargon.model.StringItem;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -26,52 +27,57 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * XLS Parser.
  */
-final class XLSParser implements BaseParser<Workbook, List<LocaleGroup>> {
-
-    /**
-     * Locale manager instance.
-     */
-    private final BaseLocaleManager localeManager;
+final class XLSParser implements BaseParser<Workbook, List<BaseItem>> {
 
     /**
      * Default constructor.
-     *
-     * @param localeManager locale manager.
      */
     @Inject
-    XLSParser(@Nonnull XlsLocaleManager localeManager) {
-        this.localeManager = localeManager;
+    XLSParser() {
+
+
     }
 
     @Nullable
     @Override
-    public List<LocaleGroup> parse(@Nonnull Workbook source) {
+    public List<BaseItem> parse(@Nonnull Workbook source) {
         var sheet = source.getSheetAt(0);
-        var localeItems = new ArrayList<LocaleGroup>();
+        var items = new ArrayList<BaseItem>();
         var headerRow = sheet.getRow(0);
-        for (int i = 1; headerRow.getCell(i) != null; i++) {
-            var localeName = headerRow.getCell(i).getStringCellValue();
-            var locale = localeManager.extractLocale(localeName);
-            localeItems.add(new LocaleGroup(locale, new ArrayList<>()));
-        }
 
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             var row = sheet.getRow(i);
             if (row != null) {
-                var cellId = row.getCell(INDEX_COLUMN_ID);
-                if (cellId != null) {
+                var idCell = row.getCell(INDEX_COLUMN_ID);
+                if (idCell == null || idCell.getStringCellValue() == null || idCell.getStringCellValue().isBlank()) {
+                    //TODO empty item or comment
+                    System.out.println("Empty Item or comment");
+                } else {
+                    var id = idCell.getStringCellValue();
+                    var values = new HashMap<String, String>();
                     for (int j = INDEX_COLUMN_DEFAULT_VALUE; j < row.getLastCellNum(); j++) {
-                        localeItems.get(j - 1).getItems().add(
-                                new StringItem(cellId.getStringCellValue(), row.getCell(j).getStringCellValue()));
+                        var valueCell = row.getCell(j);
+                        if (valueCell != null && valueCell.getStringCellValue() != null
+                                && !valueCell.getStringCellValue().isBlank()) {
+                            var value = valueCell.getStringCellValue();
+                            var locale = headerRow.getCell(j).getStringCellValue();
+                            if (locale.equals("Default")) {
+                                locale = "";
+                            }
+                            values.put(locale, value);
+                        }
                     }
+                    items.add(new StringItem(id, values));
                 }
             }
         }
-        return localeItems;
+
+        return items;
     }
 }

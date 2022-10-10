@@ -16,15 +16,5 @@
 
 package com.reboot297.sargon.converter;
 
-import javax.annotation.Nonnull;
-
-interface BaseFileWriter<T> {
-    /**
-     * Write formatted data to file or folder.
-     *
-     * @param source formatted data
-     * @param path   path to file of folder
-     * @return true if success
-     */
-    boolean write(@Nonnull T source, @Nonnull String path);
+abstract class BaseTextLocaleManagerImpl extends BaseLocaleManagerImpl implements TextLocaleManager {
 }

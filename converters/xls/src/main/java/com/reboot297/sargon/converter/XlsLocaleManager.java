@@ -17,26 +17,19 @@
 package com.reboot297.sargon.converter;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Locale;
-import java.util.Optional;
 
 /**
  * Locale Manager for XLS files.
  */
 @Singleton
-final class XlsLocaleManager implements BaseLocaleManager {
+final class XlsLocaleManager extends BaseLocaleManagerImpl {
 
     /**
      * Name for default locale column.
      */
-    private static final String DEFAULT_LOCALE_NAME = "Default";
-    /**
-     * Separator in locale name.
-     */
-    private static final String LOCALE_NAME_SEPARATOR = "_";
+    static final String DEFAULT_LOCALE_NAME = "Default";
 
     /**
      * Default constructor.
@@ -50,70 +43,48 @@ final class XlsLocaleManager implements BaseLocaleManager {
      * Extract locale from column name.
      *
      * @param text column name
-     * @return locale object
+     * @return locale key
      */
     @Nonnull
     @Override
-    public Locale extractLocale(@Nonnull String text) {
+    public String extractLocale(@Nonnull String text) {
         var language = "";
         var country = "";
 
         if (!text.equals(DEFAULT_LOCALE_NAME)) {
             var values = text.split(LOCALE_NAME_SEPARATOR);
-            if (values[0].matches("[a-z]+")) {
+            if (values[0].matches("[a-zA-Z]+")) {
                 language = values[0];
                 if (values.length > 1) {
                     country = values[1];
+                    return language.toLowerCase() + "_" + country.toUpperCase();
                 }
+                return language.toLowerCase();
             }
         }
-        return new Locale(language, country);
+        return "";
     }
 
     /**
-     * Create column name from locale object.
+     * Create column name from locale key.
      *
-     * @param locale locale object
+     * @param localeKey locale key
      * @return column name
      */
     @Nonnull
     @Override
-    public String nameFromLocale(@Nonnull Locale locale) {
-        var builder = new StringBuilder();
-        getLanguage(locale.getLanguage())
-                .ifPresentOrElse(language -> {
-                    builder.append(language);
-                    getCountry(locale.getCountry()).ifPresent(country ->
-                            builder.append(LOCALE_NAME_SEPARATOR).append(country)
-                    );
-                }, () -> builder.append(DEFAULT_LOCALE_NAME));
+    public String nameFromLocale(@Nonnull String localeKey) {
+        if (localeKey.isEmpty()) {
+            return DEFAULT_LOCALE_NAME;
+        }
 
-        return builder.toString();
-    }
-
-    /**
-     * Extract language from locale.
-     *
-     * @param language language value
-     * @return optional object
-     */
-    @Nonnull
-    private static Optional<String> getLanguage(@Nullable String language) {
-        return Optional.ofNullable(language)
-                .filter(it -> !it.isBlank())
-                .map(String::toLowerCase);
-    }
-
-    /**
-     * Extract country from locale.
-     *
-     * @param country country value
-     * @return optional object
-     */
-    @Nonnull
-    private static Optional<String> getCountry(@Nullable String country) {
-        return Optional.ofNullable(country)
-                .filter(it -> !it.isBlank())
-                .map(String::toUpperCase);
+        var parts = localeKey.split(LOCALE_NAME_SEPARATOR);
+        if (parts.length == 1 && isLanguageValid(parts[0])) {
+            return parts[0].toLowerCase();
+        } else if (parts.length == 2 && isLanguageValid(parts[0]) && isCountryValid(parts[1])) {
+            return parts[0].toLowerCase() + LOCALE_NAME_SEPARATOR + parts[1].toUpperCase();
+        } else {
+            return localeKey;
+        }
     }
 }

@@ -104,6 +104,18 @@ abstract class BaseConverterImpl<R, L> implements BaseConverter<R, L> {
         return fileWriter;
     }
 
+    @Override
+    public L readItems(@Nonnull String sourcePath) {
+        var source = getFileReader().read(sourcePath);
+        return getParser().parse(source);
+    }
+
+    @Override
+    public boolean writeItems(@Nonnull String destinationPath, L items) {
+        var table = getFormatter().format(items);
+        return getFileWriter().write(table, destinationPath);
+    }
+
     @Nonnull
     @Override
     public BaseLocaleManager getLocaleManager() {

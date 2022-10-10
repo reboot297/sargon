@@ -21,26 +21,48 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * This class help us to write android formatted string to the files.
  */
-final class AndroidFileWriter implements BaseFileWriter<String> {
+final class AndroidFileWriter implements BaseFileWriter<Map<String, String>> {
+
+    /**
+     * LocaleManage instance.
+     */
+    private final AndroidLocaleManager localeManager;
 
     @Inject
-    AndroidFileWriter() {
-
+    AndroidFileWriter(AndroidLocaleManager localeManager) {
+        this.localeManager = localeManager;
     }
 
     /**
-     * Write android xml date into the file.
+     * Write android xml data into the files.
      *
-     * @param source formatted data
-     * @param path   path to file
+     * @param source        map of {locale-key, xml-formatted-data}
+     * @param resFolderPath path to android "res" folder
      * @return true if success.
      */
     @Override
-    public boolean writeFile(@Nonnull String source, @Nonnull String path) {
+    public boolean write(@Nonnull Map<String, String> source, @Nonnull String resFolderPath) {
+        boolean success = false;
+        for (var key : source.keySet()) {
+            var pathToFile = localeManager.pathToLocaleFile(resFolderPath, key);
+            success |= writeFile(source.get(key), pathToFile);
+        }
+        return success;
+    }
+
+    /**
+     * Write formatted text data in to the file.
+     *
+     * @param source source data
+     * @param path   path to the file
+     * @return true if success
+     */
+    private boolean writeFile(String source, @Nonnull String path) {
         try {
             Path p = Path.of(path);
             Files.createDirectories(p.getParent());

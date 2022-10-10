@@ -16,11 +16,11 @@
 
 package com.reboot297.sargon.converter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.Locale;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test cases for android locale manager.
@@ -39,8 +39,7 @@ public class AndroidLocaleManagerTest {
     public void testExtractDefaultLocale() {
         var folderName = "values";
         var locale = localeManager.extractLocale(folderName);
-        assertEquals("", locale.getLanguage());
-        assertEquals("", locale.getCountry());
+        assertEquals("", locale);
     }
 
     /**
@@ -50,8 +49,7 @@ public class AndroidLocaleManagerTest {
     public void testExtractLocaleWithLanguage() {
         var folderName = "values-en";
         var locale = localeManager.extractLocale(folderName);
-        assertEquals("en", locale.getLanguage());
-        assertEquals("", locale.getCountry());
+        assertEquals("en", locale);
     }
 
     /**
@@ -61,19 +59,17 @@ public class AndroidLocaleManagerTest {
     public void testExtractLocaleWithLanguageAndCountry() {
         var folderName = "values-en-rUS";
         var locale = localeManager.extractLocale(folderName);
-        assertEquals("en", locale.getLanguage());
-        assertEquals("US", locale.getCountry());
+        assertEquals("en_US", locale);
     }
 
     /**
-     * Extract locale from wrong folder.
+     * Extract locale from custom name.
      */
     @Test
     public void testExtractLocaleFromWrongFolder() {
-        var folderName = "val";
+        var folderName = "values-hdpi-en-rBR-night";
         var locale = localeManager.extractLocale(folderName);
-        assertEquals("", locale.getLanguage());
-        assertEquals("", locale.getCountry());
+        assertEquals("hdpi-en-rBR-night", locale);
     }
 
     /**
@@ -81,7 +77,7 @@ public class AndroidLocaleManagerTest {
      */
     @Test
     public void testCreateNameForDefaultLocale() {
-        assertEquals("values", localeManager.nameFromLocale(new Locale("", "")));
+        assertEquals("values", localeManager.nameFromLocale(""));
     }
 
     /**
@@ -89,7 +85,8 @@ public class AndroidLocaleManagerTest {
      */
     @Test
     public void testCreateNameForLocaleWithLanguage() {
-        assertEquals("values-en", localeManager.nameFromLocale(new Locale("EN", "")));
+        assertEquals("values-en", localeManager.nameFromLocale("EN"));
+        assertEquals("values-en", localeManager.nameFromLocale("en"));
     }
 
     /**
@@ -97,15 +94,10 @@ public class AndroidLocaleManagerTest {
      */
     @Test
     public void testCreateNameForLocaleWithLanguageAndCountry() {
-        assertEquals("values-en-rUS", localeManager.nameFromLocale(new Locale("EN", "us")));
-    }
-
-    /**
-     * Create name for locale with country only.
-     */
-    @Test
-    public void testCreateNameForLocaleWithCountry() {
-        assertEquals("values", localeManager.nameFromLocale(new Locale("", "us")));
+        assertEquals("values-en-rUS", localeManager.nameFromLocale("EN_US"));
+        assertEquals("values-en-rUS", localeManager.nameFromLocale("en_us"));
+        assertEquals("values-en-rUS", localeManager.nameFromLocale("EN_us"));
+        assertEquals("values-en-rUS", localeManager.nameFromLocale("en_US"));
     }
 
     /**
@@ -114,7 +106,7 @@ public class AndroidLocaleManagerTest {
     @Test
     public void testCreatePathToDefaultLocale() {
         var expected = "app" + File.separator + "res" + File.separator + "values" + File.separator + "strings.xml";
-        assertEquals(expected, localeManager.pathToLocaleFile("app" + File.separator + "res", new Locale("", "")));
+        assertEquals(expected, localeManager.pathToLocaleFile("app" + File.separator + "res", ""));
     }
 
 }

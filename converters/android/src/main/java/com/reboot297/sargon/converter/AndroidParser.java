@@ -17,20 +17,23 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.ItemType;
 import com.reboot297.sargon.model.StringItem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 /**
  * Parser for android strings.
  */
-final class AndroidParser implements BaseParser<String, List<BaseItem>> {
+final class AndroidParser implements BaseParser<Map<String, String>, List<BaseItem>> {
 
     /**
      * Default constructor.
@@ -48,8 +51,17 @@ final class AndroidParser implements BaseParser<String, List<BaseItem>> {
      */
     @Nullable
     @Override
-    public List<BaseItem> parse(@Nonnull String source) {
-        var result = new ArrayList<BaseItem>();
+    public List<BaseItem> parse(@Nonnull Map<String, String> source) {
+        var items = new ArrayList<BaseItem>();
+
+        for (var key : source.keySet()) {
+            parse(source.get(key), items, key);
+        }
+
+        return items;
+    }
+
+    private void parse(@Nonnull String source, @Nonnull List<BaseItem> items, @Nonnull String key) {
 
         int position = 0;
         int nextPosition;
@@ -58,15 +70,13 @@ final class AndroidParser implements BaseParser<String, List<BaseItem>> {
             nextPosition = getNextPosition(source, position);
             nextWord = source.substring(position, nextPosition);
             if (Constants.XML_TAG_RESOURCES_START.equals(nextWord)) { // inside resources block
-                nextPosition = parseResourcesBlock(source, result, nextPosition);
+                nextPosition = parseResourcesBlock(source, items, key, nextPosition);
             }
             position = nextPosition + 1;
         } while (nextPosition < source.length() - 1);
-
-        return result;
     }
 
-    private int parseResourcesBlock(String source, List<BaseItem> result, int nextPosition) {
+    private int parseResourcesBlock(String source, List<BaseItem> items, @Nonnull String key, int nextPosition) {
         String nextWord;
         do {
             int position = nextPosition + 1;
@@ -75,7 +85,7 @@ final class AndroidParser implements BaseParser<String, List<BaseItem>> {
 
             switch (nextWord.trim()) {
                 case Constants.XML_TAG_ANDROID_STRING_START:
-                    nextPosition = parseAndroidString(source, result, nextPosition);
+                    nextPosition = parseAndroidString(source, items, key, nextPosition);
                     break;
                 default:
                     break;
@@ -89,11 +99,12 @@ final class AndroidParser implements BaseParser<String, List<BaseItem>> {
      * Parse String Item.
      *
      * @param source        string
-     * @param result        AndroidStringItem
+     * @param items         List of BaseItems
+     * @param key           locale-key
      * @param startPosition start position for parsing
      * @return new position
      */
-    private static int parseAndroidString(String source, List<BaseItem> result, int startPosition) {
+    private static int parseAndroidString(String source, List<BaseItem> items, @Nonnull String key, int startPosition) {
 
         int endPosition = source.indexOf(Constants.XML_TAG_ANDROID_STRING_END, startPosition);
 
@@ -111,7 +122,21 @@ final class AndroidParser implements BaseParser<String, List<BaseItem>> {
         }
 
         String value = source.substring(f + 1, endPosition);
-        result.add(new StringItem(name, value));
+        // result.add(new StringItem(name, value));
+        boolean found = false;
+        for (var it : items) {
+            if (it.getType() == ItemType.STRING && ((StringItem) it).getId().equals(name)) {
+                    ((StringItem) it).getValues().put(key, value);
+                    found = true;
+            }
+        }
+
+        if (!found) {
+            var map = new HashMap<String, String>();
+            map.put(key, value);
+            items.add(new StringItem(name, map));
+        }
+
         return endPosition;
     }
 

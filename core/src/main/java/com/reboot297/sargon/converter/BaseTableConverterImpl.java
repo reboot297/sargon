@@ -16,16 +16,17 @@
 
 package com.reboot297.sargon.converter;
 
-import com.reboot297.sargon.model.LocaleGroup;
-import java.util.List;
+import com.reboot297.sargon.model.BaseItem;
+
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * Base implementation of converter for the tables.
  *
  * @param <R> - type of remote data
  */
-abstract class BaseTableConverterImpl<R> extends BaseConverterImpl<R, List<LocaleGroup>> {
+abstract class BaseTableConverterImpl<R> extends BaseConverterImpl<R, List<BaseItem>> {
     /**
      * Constructor.
      *
@@ -36,8 +37,8 @@ abstract class BaseTableConverterImpl<R> extends BaseConverterImpl<R, List<Local
      * @param localeManager     localeManager
      * @param propertiesManager properties manager
      */
-    BaseTableConverterImpl(@Nonnull BaseFormatter<List<LocaleGroup>, R> formatter,
-                           @Nonnull BaseParser<R, List<LocaleGroup>> parser,
+    BaseTableConverterImpl(@Nonnull BaseFormatter<List<BaseItem>, R> formatter,
+                           @Nonnull BaseParser<R, List<BaseItem>> parser,
                            @Nonnull BaseFileReader<R> reader,
                            @Nonnull BaseFileWriter<R> writer,
                            @Nonnull BaseLocaleManager localeManager,
@@ -48,17 +49,5 @@ abstract class BaseTableConverterImpl<R> extends BaseConverterImpl<R, List<Local
     @Override
     public boolean isTable() {
         return true;
-    }
-
-    @Override
-    public List<LocaleGroup> readItems(@Nonnull String sourcePath) {
-        var source = getFileReader().readFile(sourcePath);
-        return getParser().parse(source);
-    }
-
-    @Override
-    public boolean writeItems(@Nonnull String destinationPath, List<LocaleGroup> items) {
-        var table = getFormatter().format(items);
-        return getFileWriter().writeFile(table, destinationPath);
     }
 }
