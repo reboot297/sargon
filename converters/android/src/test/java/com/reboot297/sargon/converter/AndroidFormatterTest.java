@@ -17,6 +17,7 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.EmptyItem;
 import com.reboot297.sargon.model.StringItem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 public class AndroidFormatterTest {
 
@@ -32,17 +34,20 @@ public class AndroidFormatterTest {
     public void testStringCreating() {
         final String output = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<resources>\n" +
+                "\n" +
                 "<string name=\"simple_string\">Simple String</string>\n" +
                 "</resources>\n";
 
         final String outputEn = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<resources>\n" +
                 "<string name=\"simple_string\">Simple En String</string>\n" +
+                "\n" +
                 "</resources>\n";
 
 
         final String outputEnUS = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<resources>\n" +
+                "\n" +
                 "<string name=\"simple_string\">Simple En_US String</string>\n" +
                 "</resources>\n";
 
@@ -51,11 +56,18 @@ public class AndroidFormatterTest {
 
 
         var items = new ArrayList<BaseItem>();
+        var setValues = new LinkedHashSet<String>();
+        setValues.add("");
+        setValues.add("en_US");
+        items.add(new EmptyItem(setValues));
         var values = new LinkedHashMap<String, String>();
         values.put("", "Simple String");
         values.put("en", "Simple En String");
         values.put("en_US", "Simple En_US String");
         items.add(new StringItem("simple string", values));
+        setValues = new LinkedHashSet<>();
+        setValues.add("en");
+        items.add(new EmptyItem(setValues));
 
         var result = formatter.format(items);
         assertEquals(output, result.get(""));

@@ -17,6 +17,7 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
+import com.reboot297.sargon.model.EmptyItem;
 import com.reboot297.sargon.model.ItemType;
 import com.reboot297.sargon.model.StringItem;
 
@@ -52,7 +53,19 @@ final class AndroidFormatter implements BaseFormatter<List<BaseItem>, Map<String
 
         var builder = new StringBuilder();
         for (var item : items) {
-            if (item.getType() == ItemType.STRING) {
+            if (item.getType() == ItemType.EMPTY) {
+               var values = ((EmptyItem)item).getValues();
+                for (var key : values) {
+                    builder = localeContent.get(key);
+                    if (builder == null) {
+                        builder = new StringBuilder();
+                        localeContent.put(key, builder);
+                        builder.append(Constants.XML_HEADER).append(Constants.END_LINE)
+                                .append(Constants.XML_TAG_RESOURCES_START).append(Constants.END_LINE);
+                    }
+                    builder.append(Constants.END_LINE);
+                }
+            } else if (item.getType() == ItemType.STRING) {
 
                 var id = createAndroidId(((StringItem) item).getId());
                 var values = ((StringItem) item).getValues();
