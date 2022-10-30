@@ -22,15 +22,41 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Reader for Android xml files.
  */
-final class AndroidFileReader implements BaseFileReader<String> {
+final class AndroidFileReader implements BaseFileReader<Map<String, String>> {
+
+    /**
+     * Locale Manage instance.
+     */
+    private final AndroidLocaleManager localeManager;
 
     @Inject
-    AndroidFileReader() {
+    AndroidFileReader(@Nonnull AndroidLocaleManager localeManager) {
+        this.localeManager = localeManager;
+    }
 
+    /**
+     * Read files from android root directory..
+     *
+     * @param pathToDir path to "res" directory
+     * @return map of  {locale-key, xml-data}
+     */
+    @Nullable
+    @Override
+    public Map<String, String> read(@Nonnull String pathToDir) {
+
+        var result = new HashMap<String, String>();
+        var pathToFiles = localeManager.findFiles(pathToDir);
+        for (var path : pathToFiles) {
+            result.put(path.getLocaleKey(), readFile(path.getLocalePath()));
+        }
+
+        return result;
     }
 
     /**
@@ -40,7 +66,6 @@ final class AndroidFileReader implements BaseFileReader<String> {
      * @return string or null
      */
     @Nullable
-    @Override
     public String readFile(@Nonnull String path) {
         try {
             return Files.readString(Path.of(path));

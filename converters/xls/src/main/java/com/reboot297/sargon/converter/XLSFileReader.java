@@ -43,7 +43,7 @@ final class XLSFileReader implements BaseFileReader<Workbook> {
      * @returnn workbook or null
      */
     @Override
-    public Workbook readFile(@Nonnull String fileLocation) {
+    public Workbook read(@Nonnull String fileLocation) {
         try {
             return new XSSFWorkbook(new FileInputStream(fileLocation));
         } catch (IOException e) {

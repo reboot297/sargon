@@ -22,12 +22,14 @@ import com.reboot297.sargon.model.StringItem;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of formatter for android.
  */
-final class AndroidFormatter implements BaseFormatter<List<BaseItem>, String> {
+final class AndroidFormatter implements BaseFormatter<List<BaseItem>, Map<String, String>> {
 
     /**
      * Default constructor.
@@ -41,39 +43,69 @@ final class AndroidFormatter implements BaseFormatter<List<BaseItem>, String> {
      * Convert list of items into xml data.
      *
      * @param items source data
-     * @return formatted data
+     * @return map of {locale-key, xml-formatted-data}
      */
     @Override
     @Nonnull
-    public String format(@Nonnull List<BaseItem> items) {
+    public Map<String, String> format(@Nonnull List<BaseItem> items) {
+        var localeContent = new HashMap<String, StringBuilder>();
+
         var builder = new StringBuilder();
-        builder.append(Constants.XML_HEADER).append(Constants.END_LINE)
-                .append(Constants.XML_TAG_RESOURCES_START).append(Constants.END_LINE);
         for (var item : items) {
             if (item.getType() == ItemType.STRING) {
-                writeStringItem(builder, (StringItem) item);
+
+                var id = createAndroidId(((StringItem) item).getId());
+                var values = ((StringItem) item).getValues();
+
+                for (var key : values.keySet()) {
+                    builder = localeContent.get(key);
+                    if (builder == null) {
+                        builder = new StringBuilder();
+                        localeContent.put(key, builder);
+                        builder.append(Constants.XML_HEADER).append(Constants.END_LINE)
+                                .append(Constants.XML_TAG_RESOURCES_START).append(Constants.END_LINE);
+                    }
+                    writeStringItem(builder, id, values.get(key));
+                }
             }
         }
 
-        builder.append(Constants.XML_TAG_RESOURCES_END).append(Constants.END_LINE);
-        return builder.toString();
+        var result = new HashMap<String, String>();
+        for (var key : localeContent.keySet()) {
+            builder = localeContent.get(key);
+            builder.append(Constants.XML_TAG_RESOURCES_END).append(Constants.END_LINE);
+            result.put(key, builder.toString());
+        }
+
+        return result;
+    }
+
+    /**
+     * Create android compatible id from item id.
+     *
+     * @param id item id
+     * @return android compatibleId
+     */
+    private String createAndroidId(@Nonnull String id) { // todo add unit tests
+        return id.replaceAll(" ", "_");
     }
 
     /**
      * Write string item.
      *
      * @param builder string builder
-     * @param item    string item
+     * @param id      string item id
+     * @param value   string value
      */
-    private static void writeStringItem(@Nonnull StringBuilder builder, @Nonnull StringItem item) {
+    private static void writeStringItem(@Nonnull StringBuilder builder, @Nonnull String id, @Nonnull String value) {
         builder.append(Constants.XML_TAG_ANDROID_STRING_START).append(Constants.SPACE)
                 .append(Constants.XML_ATTRIBUTE_ANDROID_STRING_NAME)
                 .append(Constants.XML_ANDROID_ARGUMENT_DELIMITER)
                 .append(Constants.QUOTE)
-                .append(item.getId())
+                .append(id)
                 .append(Constants.QUOTE)
                 .append(Constants.TAG_END)
-                .append(item.getValue())
+                .append(value)
                 .append(Constants.XML_TAG_ANDROID_STRING_END)
                 .append(Constants.END_LINE);
     }

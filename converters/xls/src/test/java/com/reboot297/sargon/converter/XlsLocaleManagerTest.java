@@ -29,66 +29,59 @@ public class XlsLocaleManagerTest {
     private final BaseLocaleManager localeManager = new XlsLocaleManager();
 
     /**
-     * Extract locale object from default column name.
+     * Extract locale key from default column name.
      */
     @Test
     public void testExtractDefaultLocaleLocale() {
         var source = "Default";
         var locale = localeManager.extractLocale(source);
-        assertEquals("", locale.getLanguage());
-        assertEquals("", locale.getCountry());
+        assertEquals("", locale);;
     }
 
     /**
-     * Extract locale object from column name with language.
+     * Extract locale key from column name with language.
      */
     @Test
     public void testExtractLanguage() {
-        var source = "en";
-        var locale = localeManager.extractLocale(source);
-        assertEquals("en", locale.getLanguage());
-        assertEquals("", locale.getCountry());
+        assertEquals("en", localeManager.extractLocale("en"));
+        assertEquals("en", localeManager.extractLocale("EN"));
+        assertEquals("en", localeManager.extractLocale("eN"));
+        assertEquals("en", localeManager.extractLocale("En"));
     }
 
     /**
-     * Extract locale object from column name with language and country.
+     * Extract locale key from column name with language and country.
      */
     @Test
     public void testExtractLanguageAndCountry() {
-        var source = "en_US";
-        var locale = localeManager.extractLocale(source);
-        assertEquals("en", locale.getLanguage());
-        assertEquals("US", locale.getCountry());
+        assertEquals("en_US", localeManager.extractLocale("en_us"));
+        assertEquals("en_US", localeManager.extractLocale("en_US"));
+        assertEquals("en_US", localeManager.extractLocale("EN_US"));
+        assertEquals("en_US", localeManager.extractLocale("EN_us"));
     }
 
     /**
-     * Extract locale object from empty column name.
+     * Extract locale key from empty column name.
      */
     @Test
     public void testExtractLocaleFromEmptyName() {
-        var source = "";
-        var locale = localeManager.extractLocale(source);
-        assertEquals("", locale.getLanguage());
-        assertEquals("", locale.getCountry());
+        assertEquals("", localeManager.extractLocale(""));
     }
 
     /**
-     * Extract locale object from wrong column name.
+     * Extract locale key from wrong column name.
      */
     @Test
     public void testExtractFromWrongName() {
-        var source = "en-us";
-        var locale = localeManager.extractLocale(source);
-        assertEquals("", locale.getLanguage());
-        assertEquals("", locale.getCountry());
+        assertEquals("", localeManager.extractLocale("en-us"));
     }
 
     /**
-     * Create name from empty locale/
+     * Create name from empty locale
      */
     @Test
     public void testCreateNameFromDefaultLocale() {
-        assertEquals("Default", localeManager.nameFromLocale(new Locale("", "")));
+        assertEquals("Default", localeManager.nameFromLocale(""));
     }
 
     /**
@@ -96,7 +89,7 @@ public class XlsLocaleManagerTest {
      */
     @Test
     public void testCreateNameFromLocaleWithLanguage() {
-        assertEquals("en", localeManager.nameFromLocale(new Locale("EN", "")));
+        assertEquals("en", localeManager.nameFromLocale("en"));
     }
 
     /**
@@ -104,14 +97,6 @@ public class XlsLocaleManagerTest {
      */
     @Test
     public void testCreateNameFromLocaleWithLanguageAndCountry() {
-        assertEquals("en_US", localeManager.nameFromLocale(new Locale("en", "us")));
-    }
-
-    /**
-     * Create name fro locale with country only.
-     */
-    @Test
-    public void testCreateNameFromLocaleWithCountry() {
-        assertEquals("Default", localeManager.nameFromLocale(new Locale("", "US")));
+        assertEquals("en_US", localeManager.nameFromLocale("en_US"));
     }
 }

@@ -20,7 +20,6 @@ import com.reboot297.sargon.model.LocalePath;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Interface help to extract locale from file path.
@@ -31,11 +30,11 @@ interface TextLocaleManager extends BaseLocaleManager {
      * Get path to local file.
      *
      * @param rootFolder root folder
-     * @param locale     locale
+     * @param localeKey     locale key
      * @return path
      */
     @Nonnull
-    String pathToLocaleFile(@Nonnull String rootFolder, @Nonnull Locale locale);
+    String pathToLocaleFile(@Nonnull String rootFolder, @Nonnull String localeKey);
 
     /**
      * Find list of files in root directory.

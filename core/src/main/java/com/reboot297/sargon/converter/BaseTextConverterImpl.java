@@ -17,15 +17,17 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
-import java.util.List;
+
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Base implementation for text convertors.
  *
  * @param <R> type of remote data
  */
-abstract class BaseTextConverterImpl<R> extends BaseConverterImpl<R, List<BaseItem>> {
+abstract class BaseTextConverterImpl<R> extends BaseConverterImpl<Map<String, R>, List<BaseItem>> {
     /**
      * Constructor.
      *
@@ -36,10 +38,10 @@ abstract class BaseTextConverterImpl<R> extends BaseConverterImpl<R, List<BaseIt
      * @param localeManager     locale manager
      * @param propertiesManager properties manager
      */
-    BaseTextConverterImpl(@Nonnull BaseFormatter<List<BaseItem>, R> formatter,
-                          @Nonnull BaseParser<R, List<BaseItem>> parser,
-                          @Nonnull BaseFileReader<R> reader,
-                          @Nonnull BaseFileWriter<R> writer,
+    BaseTextConverterImpl(@Nonnull BaseFormatter<List<BaseItem>, Map<String, R>> formatter,
+                          @Nonnull BaseParser<Map<String, R>, List<BaseItem>> parser,
+                          @Nonnull BaseFileReader<Map<String, R>> reader,
+                          @Nonnull BaseFileWriter<Map<String, R>> writer,
                           @Nonnull TextLocaleManager localeManager,
                           @Nonnull PropertiesManager propertiesManager) {
         super(formatter, parser, reader, writer, localeManager, propertiesManager);
@@ -59,17 +61,5 @@ abstract class BaseTextConverterImpl<R> extends BaseConverterImpl<R, List<BaseIt
     @Override
     public TextLocaleManager getLocaleManager() {
         return (TextLocaleManager) super.getLocaleManager();
-    }
-
-    @Override
-    public List<BaseItem> readItems(@Nonnull String sourcePath) {
-        var source = getFileReader().readFile(sourcePath);
-        return getParser().parse(source);
-    }
-
-    @Override
-    public boolean writeItems(@Nonnull String destinationPath, List<BaseItem> items) {
-        var result = getFormatter().format(items);
-        return getFileWriter().writeFile(result, destinationPath);
     }
 }

@@ -27,5 +27,5 @@ interface BaseFileReader<T> {
      * @return data
      */
     @Nullable
-    T readFile(@Nonnull String path);
+    T read(@Nonnull String path);
 }

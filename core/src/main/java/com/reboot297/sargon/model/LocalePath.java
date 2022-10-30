@@ -17,7 +17,6 @@
 package com.reboot297.sargon.model;
 
 import javax.annotation.Nonnull;
-import java.util.Locale;
 
 /**
  * Contains info about path to locale.
@@ -26,7 +25,7 @@ public final class LocalePath {
     /**
      * Name of the locale.
      */
-    private final Locale locale;
+    private final String localeKey;
 
     /**
      * Path to the locale.
@@ -36,11 +35,11 @@ public final class LocalePath {
     /**
      * Default constructor.
      *
-     * @param locale     locale
+     * @param localeKey  locale key
      * @param localePath path to the file
      */
-    public LocalePath(@Nonnull Locale locale, @Nonnull String localePath) {
-        this.locale = locale;
+    public LocalePath(@Nonnull String localeKey, @Nonnull String localePath) {
+        this.localeKey = localeKey;
         this.localePath = localePath;
     }
 
@@ -55,12 +54,12 @@ public final class LocalePath {
     }
 
     /**
-     * Get locale.
+     * Get locale key.
      *
-     * @return locale object
+     * @return locale key
      */
     @Nonnull
-    public Locale getLocale() {
-        return locale;
+    public String getLocaleKey() {
+        return localeKey;
     }
 }

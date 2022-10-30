@@ -38,38 +38,22 @@ public class XLSParserTest {
 
 
         var row = sheet.createRow(1);
-        row.createCell(0).setCellValue("simple_string");
+        row.createCell(0).setCellValue("simple string");
         row.createCell(1).setCellValue("SimplE STring");
         row.createCell(2).setCellValue("SimplE en STring");
         row.createCell(3).setCellValue("SimplE En-US STring");
 
 
-        var xlsParser = new XLSParser(new XlsLocaleManager());
-        var localeItems = xlsParser.parse(workbook);
+        var xlsParser = new XLSParser();
+        var items = xlsParser.parse(workbook);
 
         //noinspection ConstantConditions
-        var defaultLocale = localeItems.get(0);
-        assertEquals("", defaultLocale.getLocale().getLanguage());
-        assertEquals("", defaultLocale.getLocale().getCountry());
-        var items = defaultLocale.getItems();
-        assertEquals(ItemType.STRING, items.get(0).getType());
-        assertEquals("simple_string", ((StringItem) items.get(0)).getId());
-        assertEquals("SimplE STring", ((StringItem) items.get(0)).getValue());
+        var item = items.get(0);
+        assertEquals(ItemType.STRING, item.getType());
+        assertEquals("simple string", ((StringItem)item).getId());
+        assertEquals("SimplE STring", ((StringItem)item).getValues().get(""));
+        assertEquals("SimplE en STring", ((StringItem)item).getValues().get("en"));
+        assertEquals("SimplE En-US STring", ((StringItem)item).getValues().get("en_US"));
 
-        var enLocale = localeItems.get(1);
-        assertEquals("en", enLocale.getLocale().getLanguage());
-        assertEquals("", enLocale.getLocale().getCountry());
-        items = enLocale.getItems();
-        assertEquals(ItemType.STRING, items.get(0).getType());
-        assertEquals("simple_string", ((StringItem) items.get(0)).getId());
-        assertEquals("SimplE en STring", ((StringItem) items.get(0)).getValue());
-
-        var enUSLocale = localeItems.get(2);
-        assertEquals("en", enUSLocale.getLocale().getLanguage());
-        assertEquals("US", enUSLocale.getLocale().getCountry());
-        items = enUSLocale.getItems();
-        assertEquals(ItemType.STRING, items.get(0).getType());
-        assertEquals("simple_string", ((StringItem) items.get(0)).getId());
-        assertEquals("SimplE En-US STring", ((StringItem) items.get(0)).getValue());
     }
 }

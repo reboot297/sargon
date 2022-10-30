@@ -16,32 +16,47 @@
 
 package com.reboot297.sargon.model;
 
+import java.util.Map;
+
 /**
- * Item with one string.
+ * Item with string values.
  */
 public final class StringItem extends BaseItem {
     /**
      * ID of the item<br/>
-     * Should be unique for locale.
+     * Should be unique for all data.
      */
     private final String id;
     /**
-     * Item Value.
+     * Map<{key}, {value}> of values for different locales.
+     * The key can be represented as column in the table.
+     * The keys may be two types - locale or label.
+     * locale-keys should be supported by all platforms and may be converted to Locale object.
+     * labels is a simple string values. Usually they are used for a specific platforms and ignored by others.
+     *
+     * Samples of the key:
+     * "" - default locale,
+     * xx - two letters in lover case, locale for specific language
+     * xx_XX - locale for specific language and country
+     * other cases will be interpreted like labels, for example:
+     * "hdpi-en-rBR-night" - label, contains path to the folder for android platform.
      */
-    private final String value;
+    private final Map<String, String> values;
 
     /**
      * Constructor.
-     * @param id id of string item
-     * @param value string value
+     *
+     * @param id     id of string item
+     * @param values map of values for different locales.
      */
-    public StringItem(String id, String value) {
+    public StringItem(String id, Map<String, String> values) {
         this.id = id;
-        this.value = value;
+        this.values = values;
     }
 
     /**
      * Get id.
+     *
      * @return string value
      */
     public String getId() {
@@ -49,11 +64,12 @@ public final class StringItem extends BaseItem {
     }
 
     /**
-     * Get value.
-     * @return value
+     * Get values for different locales.
+     *
+     * @return map of the values
      */
-    public String getValue() {
-        return value;
+    public Map<String, String> getValues() {
+        return values;
     }
 
     @Override

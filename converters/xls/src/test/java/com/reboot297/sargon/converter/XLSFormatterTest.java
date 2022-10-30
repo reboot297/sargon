@@ -17,13 +17,12 @@
 package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.BaseItem;
-import com.reboot297.sargon.model.LocaleGroup;
 import com.reboot297.sargon.model.StringItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.LinkedHashMap;
 
 /**
  * Test cases for XLS formatter.
@@ -36,22 +35,15 @@ public class XLSFormatterTest {
     @Test
     public void testFormatXlsString() {
 
-        var formatter = new XLSFormatter(new XlsLocaleManager());
-        var locales = new ArrayList<LocaleGroup>();
+        var formatter = new XLSFormatter();
         var items = new ArrayList<BaseItem>();
-        items.add(new StringItem("simple_string", "Simple String"));
-        locales.add(new LocaleGroup(new Locale("", ""), items));
+        var values = new LinkedHashMap<String, String>();
+        values.put("", "Simple String");
+        values.put("en", "Simple En String");
+        values.put("en_US", "Simple En_US String");
+        items.add(new StringItem("simple string", values));
 
-        items = new ArrayList<>();
-        items.add(new StringItem("simple_string", "Simple En String"));
-        locales.add(new LocaleGroup(new Locale("en"), items));
-
-        items = new ArrayList<>();
-        items.add(new StringItem("simple_string", "Simple En_US String"));
-        locales.add(new LocaleGroup(new Locale("en", "us"), items));
-
-
-        var workbook = formatter.format(locales);
+        var workbook = formatter.format(items);
 
         var sheet = workbook.getSheet("Default Strings");
         var headerRow = sheet.getRow(0);
@@ -61,7 +53,7 @@ public class XLSFormatterTest {
         assertEquals("en_US", headerRow.getCell(3).getStringCellValue());
 
         var dataRow = sheet.getRow(1);
-        assertEquals("simple_string", dataRow.getCell(0).getStringCellValue());
+        assertEquals("simple string", dataRow.getCell(0).getStringCellValue());
         assertEquals("Simple String", dataRow.getCell(1).getStringCellValue());
         assertEquals("Simple En String", dataRow.getCell(2).getStringCellValue());
         assertEquals("Simple En_US String", dataRow.getCell(3).getStringCellValue());

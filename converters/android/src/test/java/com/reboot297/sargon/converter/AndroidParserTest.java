@@ -18,8 +18,11 @@ package com.reboot297.sargon.converter;
 
 import com.reboot297.sargon.model.ItemType;
 import com.reboot297.sargon.model.StringItem;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AndroidParserTest {
 
@@ -27,15 +30,34 @@ public class AndroidParserTest {
     public void testParsingStrings() {
         final String source = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<resources>\n" +
-                "<string name=\"simple_string\">Simple StRing</string>\n" +
+                "<string name=\"simple_string\">Simple String</string>\n" +
                 "</resources>\n";
 
+        final String sourceEn = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<resources>\n" +
+                "<string name=\"simple_string\">Simple En String</string>\n" +
+                "</resources>\n";
+
+
+        final String sourceEnUS = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<resources>\n" +
+                "<string name=\"simple_string\">Simple En_US String</string>\n" +
+                "</resources>\n";
+
+        var sourceMap = Map.of(
+                "", source,
+                "en", sourceEn,
+                "en_US", sourceEnUS
+        );
+
         var parser = new AndroidParser();
-        var items = parser.parse(source);
+        var items = parser.parse(sourceMap);
 
         assertEquals(1, items.size());
         assertEquals(ItemType.STRING, items.get(0).getType());
         assertEquals("simple_string", ((StringItem) items.get(0)).getId());
-        assertEquals("Simple StRing", ((StringItem) items.get(0)).getValue());
+        assertEquals("Simple String", ((StringItem) items.get(0)).getValues().get(""));
+        assertEquals("Simple En String", ((StringItem) items.get(0)).getValues().get("en"));
+        assertEquals("Simple En_US String", ((StringItem) items.get(0)).getValues().get("en_US"));
     }
 }

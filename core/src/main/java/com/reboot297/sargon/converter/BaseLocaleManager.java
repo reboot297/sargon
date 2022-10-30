@@ -17,7 +17,6 @@
 package com.reboot297.sargon.converter;
 
 import javax.annotation.Nonnull;
-import java.util.Locale;
 
 /**
  * Base interface to work with locales.
@@ -25,20 +24,20 @@ import java.util.Locale;
 interface BaseLocaleManager {
 
     /**
-     * Extract locale object from name of the file or column name of table.
+     * Extract locale-key from name of the file or column name of table.
      *
      * @param text name
-     * @return Locale object
+     * @return string value
      */
     @Nonnull
-    Locale extractLocale(@Nonnull String text);
+    String extractLocale(@Nonnull String text);
 
     /**
-     * Generate name from locale object.
+     * Generate name from locale-key.
      *
-     * @param locale locale
+     * @param localeString locale-key
      * @return name.
      */
     @Nonnull
-    String nameFromLocale(@Nonnull Locale locale);
+    String nameFromLocale(@Nonnull String localeString);
 }

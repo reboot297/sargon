@@ -16,11 +16,11 @@
 
 package com.reboot297.sargon.converter;
 
-import javax.inject.Singleton;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -44,7 +44,7 @@ final class XLSFileWriter implements BaseFileWriter<Workbook> {
      * @return true if success
      */
     @Override
-    public boolean writeFile(@Nonnull Workbook source, @Nonnull String path) {
+    public boolean write(@Nonnull Workbook source, @Nonnull String path) {
         try {
             Path p = Path.of(path);
             Files.createDirectories(p.getParent());
